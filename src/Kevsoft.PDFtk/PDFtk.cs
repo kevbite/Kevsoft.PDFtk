@@ -174,15 +174,22 @@ namespace Kevsoft.PDFtk
 
             var inputFileNames = string.Join(" ", inputFiles.Select(x => x.TempFileName));
 
-            var executeProcessResult = await ExecuteProcess(inputFileNames, "cat", "output", outputFile.TempFileName);
-
-            var bytes = Array.Empty<byte>();
-            if (executeProcessResult.Success)
+            try
             {
-                bytes = await File.ReadAllBytesAsync(outputFile.TempFileName);
-            }
+                var executeProcessResult = await ExecuteProcess(inputFileNames, "cat", "output", outputFile.TempFileName);
+                
+                var bytes = Array.Empty<byte>();
+                if (executeProcessResult.Success)
+                {
+                    bytes = await File.ReadAllBytesAsync(outputFile.TempFileName);
+                }
 
-            return new PDFtkResult<byte[]>(executeProcessResult, bytes);
+                return new PDFtkResult<byte[]>(executeProcessResult, bytes);
+            }
+            finally
+            {
+                inputFiles.Dispose();
+            }
         }
         
         public async Task<IPDFtkResult<IEnumerable<byte[]>>> Split(byte[] file)
