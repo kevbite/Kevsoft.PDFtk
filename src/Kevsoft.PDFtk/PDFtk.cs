@@ -11,7 +11,7 @@ namespace Kevsoft.PDFtk
 {
     public sealed class PDFtk
     {
-        public async Task<PDFtkResult<int?>> GetNumberOfPages(byte[] pdfFileBytes)
+        public async Task<IPDFtkResult<int?>> GetNumberOfPages(byte[] pdfFileBytes)
         {
             using var inputFile = await CreateTempPdFtkFile(pdfFileBytes);
 
@@ -84,17 +84,21 @@ namespace Kevsoft.PDFtk
                 standardErrorstringBuilder.ToString());
         }
 
-        private static async Task<TempPDFtkFile> CreateTempPdFtkFile(byte[] pdfFileBytes)
+        private static async Task<TempPDFtkFile> CreateTempPdFtkFile(byte[]? pdfFileBytes = null)
         {
             var inputFile = new TempPDFtkFile();
-            await File.WriteAllBytesAsync(inputFile.TempFileName, pdfFileBytes);
+            if (pdfFileBytes is not null)
+            {
+                await File.WriteAllBytesAsync(inputFile.TempFileName, pdfFileBytes);
+            }
+
             return inputFile;
         }
-
-        public async Task<PDFtkResult<byte[]>> GetPages(byte[] pdfFileBytes, params int[] pages)
+        
+        public async Task<IPDFtkResult<byte[]>> GetPages(byte[] pdfFileBytes, params int[] pages)
         {
             using var inputFile = await CreateTempPdFtkFile(pdfFileBytes);
-            using var outputFile = await CreateTempPdFtkFile(pdfFileBytes);
+            using var outputFile = await CreateTempPdFtkFile();
 
             var pageRanges = GetPageRangeArgs(pages);
 
@@ -110,19 +114,6 @@ namespace Kevsoft.PDFtk
             return new PDFtkResult<byte[]>(executeProcessResult, bytes);
         }
 
-        // private static IEnumerable<string> GetPageRangeArgs(int[] pages)
-        // {
-        //     return pages.GroupConsecutive()
-        //         .Select(x =>
-        //         {
-        //             if (x.Count() <= 1) return x.First().ToString();
-        //             var min = x.Min();
-        //             var max = x.Max();
-        //
-        //             return $"{min}-{max}";
-        //         });
-        // }
-        
         private static IEnumerable<string> GetPageRangeArgs(int[] pages)
         {
             var runStart = -1;
@@ -153,7 +144,7 @@ namespace Kevsoft.PDFtk
             yield return RangeString();
         }
 
-        public async Task<PDFtkResult<DataField[]>> DumpDataFields(byte[] pdfFileBytes)
+        public async Task<IPDFtkResult<IDataField[]>> DumpDataFields(byte[] pdfFileBytes)
         {
             using var inputFile = await CreateTempPdFtkFile(pdfFileBytes);
             using var outputFile = await CreateTempPdFtkFile(pdfFileBytes);
@@ -171,6 +162,27 @@ namespace Kevsoft.PDFtk
             }
 
             return new PDFtkResult<DataField[]>(executeProcessResult, dataFields);
+        }
+        
+        public async Task<IPDFtkResult<byte[]>> Concat(IEnumerable<byte[]> files)
+        {
+            var inputFiles = await Task.WhenAll(
+                files.Select(async file => await CreateTempPdFtkFile(file))
+                    .ToList());
+
+            using var outputFile = await CreateTempPdFtkFile();
+
+            var inputFileNames = string.Join(" ", inputFiles.Select(x => x.TempFileName));
+
+            var executeProcessResult = await ExecuteProcess(inputFileNames, "cat", "output", outputFile.TempFileName);
+
+            var bytes = Array.Empty<byte>();
+            if (executeProcessResult.Success)
+            {
+                bytes = await File.ReadAllBytesAsync(outputFile.TempFileName);
+            }
+
+            return new PDFtkResult<byte[]>(executeProcessResult, bytes);
         }
     }
 }

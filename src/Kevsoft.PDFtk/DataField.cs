@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Kevsoft.PDFtk
 {
-    public sealed class DataField
+    internal sealed class DataField : IDataField
     {
         public string? FieldValue { get; private set; }
         public string? FieldValueDefault { get; private set; }
@@ -23,14 +23,15 @@ namespace Kevsoft.PDFtk
             {
                 var split = arg.Split(":", 2);
                 var key = split[0];
-                
+
                 var value = split.Length == 1 ? null : split[1][1..];
-                
+
                 FieldSetMap[key](dataField, value);
             }
 
             return dataField;
         }
+
         private static readonly Dictionary<string, Action<DataField, string?>> FieldSetMap
             = new()
             {
@@ -41,7 +42,13 @@ namespace Kevsoft.PDFtk
                 ["FieldNameAlt"] = (field, value) => field.FieldNameAlt = value,
                 ["FieldFlags"] = (field, value) => field.FieldFlags = value,
                 ["FieldJustification"] = (field, value) => field.FieldJustification = value,
-                ["FieldStateOption"] = (field, value) => field.FieldStateOption = field.FieldStateOption.Concat(new[]{value}).ToArray(),
+                ["FieldStateOption"] = (field, value) =>
+                {
+                    if (value is { })
+                    {
+                        field.FieldStateOption = field.FieldStateOption.Concat(new[] {value}).ToArray();
+                    }
+                },
                 ["FieldMaxLength"] = (field, value) => field.FieldMaxLength = value
             };
     }
