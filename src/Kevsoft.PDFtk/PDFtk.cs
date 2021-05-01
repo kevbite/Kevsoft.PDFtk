@@ -60,13 +60,7 @@ namespace Kevsoft.PDFtk
                 string.Join(" ", pageRanges),
                 "output", outputFile.TempFileName);
 
-            var bytes = new byte[0];
-            if (executeProcessResult.Success)
-            {
-                bytes = await File.ReadAllBytesAsync(outputFile.TempFileName);
-            }
-
-            return new PDFtkResult<byte[]>(executeProcessResult, bytes);
+            return await ResolveSingleFileExecutionResult(executeProcessResult, outputFile);
         }
 
         private static IEnumerable<string> GetPageRangeArgs(int[] pages)
@@ -135,13 +129,7 @@ namespace Kevsoft.PDFtk
                 var executeProcessResult =
                     await _pdftkProcess.Execute(inputFileNames, "cat", "output", outputFile.TempFileName);
 
-                var bytes = Array.Empty<byte>();
-                if (executeProcessResult.Success)
-                {
-                    bytes = await File.ReadAllBytesAsync(outputFile.TempFileName);
-                }
-
-                return new PDFtkResult<byte[]>(executeProcessResult, bytes);
+                return await ResolveSingleFileExecutionResult(executeProcessResult, outputFile);
             }
             finally
             {
@@ -185,16 +173,10 @@ namespace Kevsoft.PDFtk
                 "multistamp", stampFile.TempFileName,
                 "output", outputFile.TempFileName);
 
-            var bytes = new byte[0];
-            if (executeProcessResult.Success)
-            {
-                bytes = await File.ReadAllBytesAsync(outputFile.TempFileName);
-            }
-
-            return new PDFtkResult<byte[]>(executeProcessResult, bytes);
+            return await ResolveSingleFileExecutionResult(executeProcessResult, outputFile);
         }
 
-        public async Task<PDFtkResult<byte[]>> FillForm(byte[] pdfFile,
+        public async Task<IPDFtkResult<byte[]>> FillForm(byte[] pdfFile,
             IReadOnlyDictionary<string, string> fieldData,
             bool flatten,
             bool dropXfa)
@@ -223,7 +205,13 @@ namespace Kevsoft.PDFtk
 
             var executeProcessResult = await _pdftkProcess.Execute(args.ToArray());
 
-            var bytes = new byte[0];
+            return await ResolveSingleFileExecutionResult(executeProcessResult, outputFile);
+        }
+        
+        private static async Task<IPDFtkResult<byte[]>> ResolveSingleFileExecutionResult(ExecutionResult executeProcessResult,
+            TempPDFtkFile outputFile)
+        {
+            var bytes = Array.Empty<byte>();
             if (executeProcessResult.Success)
             {
                 bytes = await File.ReadAllBytesAsync(outputFile.TempFileName);
