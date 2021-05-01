@@ -214,5 +214,26 @@ namespace Kevsoft.PDFtk
 
             return new PDFtkResult<IEnumerable<byte[]>>(executeProcessResult, outputFileBytes);
         }
+        
+        public async Task<IPDFtkResult<byte[]>> Stamp(byte[] pdfFile, byte[] stampPdfFile)
+        {
+            using var inputFile = await CreateTempPdFtkFile(pdfFile);
+            using var stampFile = await CreateTempPdFtkFile(stampPdfFile);
+            
+            using var outputFile = await CreateTempPdFtkFile();
+            
+
+            var executeProcessResult = await ExecuteProcess(inputFile.TempFileName,
+                "multistamp", stampFile.TempFileName,
+                 "output", outputFile.TempFileName);
+
+            var bytes = new byte[0];
+            if (executeProcessResult.Success)
+            {
+                bytes = await File.ReadAllBytesAsync(outputFile.TempFileName);
+            }
+
+            return new PDFtkResult<byte[]>(executeProcessResult, bytes);
+        }
     }
 }
