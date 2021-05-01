@@ -2,18 +2,18 @@
 {
     public sealed class PDFtkResult<TResult> : IPDFtkResult<TResult>
     {
-        private readonly PDFtk.ExecuteProcessResult _executeProcessResult;
+        private readonly ExecutionResult _executionResult;
 
-        internal PDFtkResult(PDFtk.ExecuteProcessResult executeProcessResult, TResult result)
+        internal PDFtkResult(ExecutionResult executionResult, TResult result)
         {
-            _executeProcessResult = executeProcessResult;
+            _executionResult = executionResult;
             Result = result;
         }
 
-        public string StandardOutput => _executeProcessResult.StandardOutput;
-        public string StandardError => _executeProcessResult.StandardError;
+        public string StandardOutput => _executionResult.StandardOutput;
+        public string StandardError => _executionResult.StandardError;
         public TResult Result { get; }
-        public int ExitCode => _executeProcessResult.ExitCode;
+        public int ExitCode => _executionResult.ExitCode;
         public bool Success => ExitCode == 0;
     }
 }

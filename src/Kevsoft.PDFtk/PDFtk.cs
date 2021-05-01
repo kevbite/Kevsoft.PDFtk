@@ -1,22 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Schema;
 
 namespace Kevsoft.PDFtk
 {
     public sealed class PDFtk
     {
+        private readonly XfdfGenerator _xfdfGenerator;
+        private readonly PDFtkProcess _pdftkProcess;
+
+        public PDFtk()
+        {
+            _xfdfGenerator = new XfdfGenerator();
+            _pdftkProcess = new PDFtkProcess();
+        }
+
         public async Task<IPDFtkResult<int?>> GetNumberOfPages(byte[] pdfFileBytes)
         {
             using var inputFile = await CreateTempPdFtkFile(pdfFileBytes);
 
-            var executeProcessResult = await ExecuteProcess(inputFile.TempFileName, "dump_data");
+            var executeProcessResult = await _pdftkProcess.Execute(inputFile.TempFileName, "dump_data");
 
             int? pages = null;
 
@@ -31,58 +36,6 @@ namespace Kevsoft.PDFtk
             }
 
             return new PDFtkResult<int?>(executeProcessResult, pages);
-        }
-
-        internal class ExecuteProcessResult
-        {
-            public ExecuteProcessResult(int exitCode, string standardOutput, string standardError)
-            {
-                ExitCode = exitCode;
-                StandardOutput = standardOutput;
-                StandardError = standardError;
-            }
-
-            public string StandardOutput { get; }
-            public string StandardError { get; }
-            public int ExitCode { get; }
-
-            public bool Success => ExitCode == 0;
-        }
-
-        private static async Task<ExecuteProcessResult> ExecuteProcess(params string[] args)
-        {
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "pdftk",
-                    Arguments = string.Join(" ", args),
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                }
-            };
-
-            process.Start();
-
-            var stringBuilder = new StringBuilder();
-            while (!process.StandardOutput.EndOfStream)
-            {
-                stringBuilder.AppendLine(await process.StandardOutput.ReadLineAsync());
-            }
-
-            var standardErrorstringBuilder = new StringBuilder();
-            while (!process.StandardError.EndOfStream)
-            {
-                standardErrorstringBuilder.AppendLine(await process.StandardError.ReadLineAsync());
-            }
-
-            await process.WaitForExitAsync();
-
-
-            return new ExecuteProcessResult(process.ExitCode, stringBuilder.ToString(),
-                standardErrorstringBuilder.ToString());
         }
 
         private static async Task<TempPDFtkFile> CreateTempPdFtkFile(byte[]? pdfFileBytes = null)
@@ -103,7 +56,8 @@ namespace Kevsoft.PDFtk
 
             var pageRanges = GetPageRangeArgs(pages);
 
-            var executeProcessResult = await ExecuteProcess(inputFile.TempFileName, "cat", string.Join(" ", pageRanges),
+            var executeProcessResult = await _pdftkProcess.Execute(inputFile.TempFileName, "cat",
+                string.Join(" ", pageRanges),
                 "output", outputFile.TempFileName);
 
             var bytes = new byte[0];
@@ -151,7 +105,7 @@ namespace Kevsoft.PDFtk
             using var inputFile = await CreateTempPdFtkFile(pdfFileBytes);
             using var outputFile = await CreateTempPdFtkFile(pdfFileBytes);
 
-            var executeProcessResult = await ExecuteProcess(inputFile.TempFileName, "dump_data_fields");
+            var executeProcessResult = await _pdftkProcess.Execute(inputFile.TempFileName, "dump_data_fields");
 
             var dataFields = Array.Empty<DataField>();
             if (executeProcessResult.Success)
@@ -179,7 +133,7 @@ namespace Kevsoft.PDFtk
             try
             {
                 var executeProcessResult =
-                    await ExecuteProcess(inputFileNames, "cat", "output", outputFile.TempFileName);
+                    await _pdftkProcess.Execute(inputFileNames, "cat", "output", outputFile.TempFileName);
 
                 var bytes = Array.Empty<byte>();
                 if (executeProcessResult.Success)
@@ -203,7 +157,7 @@ namespace Kevsoft.PDFtk
 
             var outputFilePattern = Path.Combine(outputDirectory.TempDirectoryFullName, "page_%02d.pdf");
             var executeProcessResult =
-                await ExecuteProcess(inputFile.TempFileName, "burst", "output", outputFilePattern);
+                await _pdftkProcess.Execute(inputFile.TempFileName, "burst", "output", outputFilePattern);
 
             var outputFileBytes = new List<byte[]>();
             if (executeProcessResult.Success)
@@ -227,7 +181,7 @@ namespace Kevsoft.PDFtk
             using var outputFile = await CreateTempPdFtkFile();
 
 
-            var executeProcessResult = await ExecuteProcess(inputFile.TempFileName,
+            var executeProcessResult = await _pdftkProcess.Execute(inputFile.TempFileName,
                 "multistamp", stampFile.TempFileName,
                 "output", outputFile.TempFileName);
 
@@ -240,12 +194,14 @@ namespace Kevsoft.PDFtk
             return new PDFtkResult<byte[]>(executeProcessResult, bytes);
         }
 
-        public async Task<PDFtkResult<byte[]>> FillForm(byte[] pdfFile, IReadOnlyDictionary<string, string> fieldData, bool flatten,
+        public async Task<PDFtkResult<byte[]>> FillForm(byte[] pdfFile,
+            IReadOnlyDictionary<string, string> fieldData,
+            bool flatten,
             bool dropXfa)
         {
             using var inputFile = await CreateTempPdFtkFile(pdfFile);
             using var outputFile = await CreateTempPdFtkFile();
-            using var xfdfFile = await CreateXfdfFile(fieldData);
+            using var xfdfFile = await _xfdfGenerator.CreateXfdfFile(fieldData);
 
             var args = new List<string>(new[]
             {
@@ -265,8 +221,8 @@ namespace Kevsoft.PDFtk
                 args.Add("drop_xfa");
             }
 
-            var executeProcessResult = await ExecuteProcess(args.ToArray());
-            
+            var executeProcessResult = await _pdftkProcess.Execute(args.ToArray());
+
             var bytes = new byte[0];
             if (executeProcessResult.Success)
             {
@@ -274,50 +230,6 @@ namespace Kevsoft.PDFtk
             }
 
             return new PDFtkResult<byte[]>(executeProcessResult, bytes);
-        }
-
-        private async Task<TempPDFtkFile> CreateXfdfFile(IReadOnlyDictionary<string, string> fieldData)
-        {
-            var inputFile = new TempPDFtkFile();
-            
-            var xmlWriterSettings = new XmlWriterSettings()
-            {
-                Async = true
-            };
-            await using var xmlWriter =
-                XmlWriter.Create(inputFile.TempFileName, xmlWriterSettings);
-
-            await xmlWriter.WriteStartDocumentAsync();
-
-            await xmlWriter.WriteStartElementAsync(null, "xfdf", "http://ns.adobe.com/xfdf/");
-            await xmlWriter.WriteAttributeStringAsync("xml", "space", null, "preserve");
-
-            await xmlWriter.WriteStartElementAsync(null, "fields", null);
-
-            foreach (var (key, value) in fieldData)
-            {
-                await xmlWriter.WriteStartElementAsync(null, "field", null);
-                await xmlWriter.WriteAttributeStringAsync(null, "name", null, key);
-                
-                await xmlWriter.WriteStartElementAsync(null, "value", null);
-                await xmlWriter.WriteStringAsync(value);
-                
-                await xmlWriter.WriteEndElementAsync();
-                
-                await xmlWriter.WriteEndElementAsync();
-
-            }
-
-            await xmlWriter.WriteEndElementAsync();
-
-
-            await xmlWriter.WriteEndElementAsync();
-
-            await xmlWriter.WriteEndDocumentAsync();
-            
-            await xmlWriter.FlushAsync();
-
-            return inputFile;
         }
     }
 }
