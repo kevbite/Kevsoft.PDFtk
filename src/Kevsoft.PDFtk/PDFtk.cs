@@ -19,7 +19,7 @@ namespace Kevsoft.PDFtk
 
         public async Task<IPDFtkResult<int?>> GetNumberOfPages(byte[] pdfFileBytes)
         {
-            using var inputFile = await CreateTempPdFtkFile(pdfFileBytes);
+            using var inputFile = await TempPDFtkFile.Create(pdfFileBytes);
 
             var executeProcessResult = await _pdftkProcess.Execute(inputFile.TempFileName, "dump_data");
 
@@ -38,21 +38,10 @@ namespace Kevsoft.PDFtk
             return new PDFtkResult<int?>(executeProcessResult, pages);
         }
 
-        private static async Task<TempPDFtkFile> CreateTempPdFtkFile(byte[]? pdfFileBytes = null)
-        {
-            var inputFile = new TempPDFtkFile();
-            if (pdfFileBytes is not null)
-            {
-                await File.WriteAllBytesAsync(inputFile.TempFileName, pdfFileBytes);
-            }
-
-            return inputFile;
-        }
-
         public async Task<IPDFtkResult<byte[]>> GetPages(byte[] pdfFileBytes, params int[] pages)
         {
-            using var inputFile = await CreateTempPdFtkFile(pdfFileBytes);
-            using var outputFile = await CreateTempPdFtkFile();
+            using var inputFile = await TempPDFtkFile.Create(pdfFileBytes);
+            using var outputFile = await TempPDFtkFile.Create();
 
             var pageRanges = GetPageRangeArgs(pages);
 
@@ -96,8 +85,7 @@ namespace Kevsoft.PDFtk
 
         public async Task<IPDFtkResult<IDataField[]>> DumpDataFields(byte[] pdfFileBytes)
         {
-            using var inputFile = await CreateTempPdFtkFile(pdfFileBytes);
-            using var outputFile = await CreateTempPdFtkFile(pdfFileBytes);
+            using var inputFile = await TempPDFtkFile.Create(pdfFileBytes);
 
             var executeProcessResult = await _pdftkProcess.Execute(inputFile.TempFileName, "dump_data_fields");
 
@@ -117,10 +105,10 @@ namespace Kevsoft.PDFtk
         public async Task<IPDFtkResult<byte[]>> Concat(IEnumerable<byte[]> files)
         {
             var inputFiles = await Task.WhenAll(
-                files.Select(async file => await CreateTempPdFtkFile(file))
+                files.Select(async file => await TempPDFtkFile.Create(file))
                     .ToList());
 
-            using var outputFile = await CreateTempPdFtkFile();
+            using var outputFile = await TempPDFtkFile.Create(null);
 
             var inputFileNames = string.Join(" ", inputFiles.Select(x => x.TempFileName));
 
@@ -139,9 +127,9 @@ namespace Kevsoft.PDFtk
 
         public async Task<IPDFtkResult<IEnumerable<byte[]>>> Split(byte[] file)
         {
-            using var inputFile = await CreateTempPdFtkFile(file);
+            using var inputFile = await TempPDFtkFile.Create(file);
 
-            using var outputDirectory = new TempPDFtkDirectory();
+            using var outputDirectory = TempPDFtkDirectory.Create();
 
             var outputFilePattern = Path.Combine(outputDirectory.TempDirectoryFullName, "page_%02d.pdf");
             var executeProcessResult =
@@ -163,10 +151,10 @@ namespace Kevsoft.PDFtk
 
         public async Task<IPDFtkResult<byte[]>> Stamp(byte[] pdfFile, byte[] stampPdfFile)
         {
-            using var inputFile = await CreateTempPdFtkFile(pdfFile);
-            using var stampFile = await CreateTempPdFtkFile(stampPdfFile);
+            using var inputFile = await TempPDFtkFile.Create(pdfFile);
+            using var stampFile = await TempPDFtkFile.Create(stampPdfFile);
 
-            using var outputFile = await CreateTempPdFtkFile();
+            using var outputFile = await TempPDFtkFile.Create();
 
 
             var executeProcessResult = await _pdftkProcess.Execute(inputFile.TempFileName,
@@ -181,8 +169,8 @@ namespace Kevsoft.PDFtk
             bool flatten,
             bool dropXfa)
         {
-            using var inputFile = await CreateTempPdFtkFile(pdfFile);
-            using var outputFile = await CreateTempPdFtkFile();
+            using var inputFile = await TempPDFtkFile.Create(pdfFile);
+            using var outputFile = await TempPDFtkFile.Create();
             using var xfdfFile = await _xfdfGenerator.CreateXfdfFile(fieldData);
 
             var args = new List<string>(new[]

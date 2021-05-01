@@ -8,7 +8,7 @@ namespace Kevsoft.PDFtk
         private readonly DirectoryInfo _directoryInfo;
         public string TempDirectoryFullName => _directoryInfo.FullName;
 
-        public TempPDFtkDirectory()
+        private TempPDFtkDirectory()
         {
             _directoryInfo = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
         }
@@ -16,6 +16,11 @@ namespace Kevsoft.PDFtk
         public void Dispose()
         {
             _directoryInfo.Delete(true);
+        }
+
+        public static TempPDFtkDirectory Create()
+        {
+            return new TempPDFtkDirectory();
         }
     }
 }

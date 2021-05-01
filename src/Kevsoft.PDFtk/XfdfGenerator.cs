@@ -8,7 +8,7 @@ namespace Kevsoft.PDFtk
     {
         internal async Task<TempPDFtkFile> CreateXfdfFile(IReadOnlyDictionary<string, string> fieldData)
         {
-            var inputFile = new TempPDFtkFile();
+            var inputFile = await TempPDFtkFile.Create();
 
             var xmlWriterSettings = new XmlWriterSettings()
             {
