@@ -9,7 +9,7 @@ namespace Kevsoft.PDFtk.Tests
     public class StampingTests
     {
         [Fact]
-        public async Task ShouldReturnStampedPdf()
+        public async Task ShouldReturnStampedPdf_ForInputFilesAsBytes()
         {
             var pdFtk = new PDFtk();
 
@@ -17,6 +17,31 @@ namespace Kevsoft.PDFtk.Tests
             var stampBytes = await File.ReadAllBytesAsync("TestFiles/Stamp.pdf");
 
             var result = await pdFtk.Stamp(fileBytes, stampBytes);
+
+            result.Success.Should().BeTrue();
+            result.Result.Should().NotBeEmpty();
+        }
+        
+        [Fact]
+        public async Task ShouldReturnStampedPdf_ForInputFilesAsStreams()
+        {
+            var pdFtk = new PDFtk();
+
+            var inputFileStream = File.OpenRead("TestFiles/TestFile1.pdf");
+            var stampFileStream = File.OpenRead("TestFiles/Stamp.pdf");
+
+            var result = await pdFtk.Stamp(inputFileStream, stampFileStream);
+
+            result.Success.Should().BeTrue();
+            result.Result.Should().NotBeEmpty();
+        }
+        
+        [Fact]
+        public async Task ShouldReturnStampedPdf_ForInputFilesAsFilePaths()
+        {
+            var pdFtk = new PDFtk();
+
+            var result = await pdFtk.Stamp("TestFiles/TestFile1.pdf", "TestFiles/Stamp.pdf");
 
             result.Success.Should().BeTrue();
             result.Result.Should().NotBeEmpty();
