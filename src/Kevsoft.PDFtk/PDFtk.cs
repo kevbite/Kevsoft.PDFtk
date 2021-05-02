@@ -113,7 +113,19 @@ namespace Kevsoft.PDFtk
         {
             using var inputFile = await TempPDFtkFile.FromBytes(pdfFileBytes);
 
-            var executeProcessResult = await _pdftkProcess.Execute(inputFile.TempFileName, "dump_data_fields");
+            return await DumpDataFields(inputFile.TempFileName);
+        }
+        
+        public async Task<IPDFtkResult<IDataField[]>> DumpDataFields(Stream pdfFile)
+        {
+            using var inputFile = await TempPDFtkFile.FromStream(pdfFile);
+
+            return await DumpDataFields(inputFile.TempFileName);
+        }
+
+        public async Task<IPDFtkResult<IDataField[]>> DumpDataFields(string filePath)
+        {
+            var executeProcessResult = await _pdftkProcess.Execute(filePath, "dump_data_fields");
 
             var dataFields = Array.Empty<DataField>();
             if (executeProcessResult.Success)
