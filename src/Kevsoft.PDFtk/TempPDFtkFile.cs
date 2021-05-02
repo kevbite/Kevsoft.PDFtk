@@ -13,15 +13,31 @@ namespace Kevsoft.PDFtk
             TempFileName = Path.GetTempFileName();
         }
 
-        public static async Task<TempPDFtkFile> Create(byte[]? pdfFileBytes = null)
+        public static async Task<TempPDFtkFile> FromBytes(byte[] pdfFileBytes)
         {
-            var inputFile = new TempPDFtkFile();
+            var tempPdFtkFile = new TempPDFtkFile();
             if (pdfFileBytes is not null)
             {
-                await File.WriteAllBytesAsync(inputFile.TempFileName, pdfFileBytes);
+                await File.WriteAllBytesAsync(tempPdFtkFile.TempFileName, pdfFileBytes);
             }
 
-            return inputFile;
+            return tempPdFtkFile;
+        }
+        
+        public static TempPDFtkFile Create()
+        {
+            return new();
+        }
+
+        public static async Task<TempPDFtkFile> FromStream(Stream stream)
+        {
+            var tempPdFtkFile = new TempPDFtkFile();
+
+            await using var openWrite = File.OpenWrite(tempPdFtkFile.TempFileName);
+
+            await stream.CopyToAsync(openWrite);
+
+            return tempPdFtkFile;
         }
 
         public void Dispose()
