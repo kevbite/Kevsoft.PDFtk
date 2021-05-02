@@ -140,27 +140,48 @@ namespace Kevsoft.PDFtk
             return new PDFtkResult<DataField[]>(executeProcessResult, dataFields);
         }
 
-        public async Task<IPDFtkResult<byte[]>> Concat(IEnumerable<byte[]> files)
+        public async Task<IPDFtkResult<byte[]>> Concat(IEnumerable<byte[]> pdfFiles)
         {
             var inputFiles = await Task.WhenAll(
-                files.Select(async file => await TempPDFtkFile.FromBytes(file))
+                pdfFiles.Select(async file => await TempPDFtkFile.FromBytes(file))
                     .ToList());
-
-            using var outputFile = TempPDFtkFile.Create();
-
-            var inputFileNames = string.Join(" ", inputFiles.Select(x => x.TempFileName));
-
+            
             try
             {
-                var executeProcessResult =
-                    await _pdftkProcess.Execute(inputFileNames, "cat", "output", outputFile.TempFileName);
-
-                return await ResolveSingleFileExecutionResult(executeProcessResult, outputFile);
+                return await Concat(inputFiles.Select(x => x.TempFileName));
             }
             finally
             {
                 inputFiles.Dispose();
             }
+        }
+        
+        public async Task<IPDFtkResult<byte[]>> Concat(IEnumerable<Stream> pdfStreams)
+        {
+            var inputFiles = await Task.WhenAll(
+                pdfStreams.Select(async file => await TempPDFtkFile.FromStream(file))
+                    .ToList());
+            
+            try
+            {
+                return await Concat(inputFiles.Select(x => x.TempFileName));
+            }
+            finally
+            {
+                inputFiles.Dispose();
+            }
+        }
+
+        public async Task<IPDFtkResult<byte[]>> Concat(IEnumerable<string> filePaths)
+        {
+            using var outputFile = TempPDFtkFile.Create();
+
+            var inputFileNames = string.Join(" ", filePaths);
+
+            var executeProcessResult =
+                await _pdftkProcess.Execute(inputFileNames, "cat", "output", outputFile.TempFileName);
+
+            return await ResolveSingleFileExecutionResult(executeProcessResult, outputFile);
         }
 
         public async Task<IPDFtkResult<IEnumerable<byte[]>>> Split(byte[] pdfFile)
