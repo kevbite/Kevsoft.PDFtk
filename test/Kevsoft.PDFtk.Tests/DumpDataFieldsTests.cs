@@ -8,13 +8,13 @@ namespace Kevsoft.PDFtk.Tests
 {
     public class DumpDataFieldsTests
     {
+        private readonly PDFtk _pdFtk = new();
+
         [Fact]
         public async Task ShouldReturnSuccessAndAllDataFields_ForInputFileAsBytes()
         {
-            var pdFtk = new PDFtk();
-
             var pdfFileBytes = await File.ReadAllBytesAsync("TestFiles/Form.pdf");
-            var result = await pdFtk.DumpDataFields(pdfFileBytes);
+            var result = await _pdFtk.DumpDataFields(pdfFileBytes);
 
             result.Success.Should().BeTrue();
             result.Result.Should().BeEquivalentTo(
@@ -26,9 +26,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnSuccessAndAllDataFields_ForInputFileFilePath()
         {
-            var pdFtk = new PDFtk();
-
-            var result = await pdFtk.DumpDataFields("TestFiles/Form.pdf");
+            var result = await _pdFtk.DumpDataFields("TestFiles/Form.pdf");
 
             result.Success.Should().BeTrue();
             result.Result.Should().BeEquivalentTo(
@@ -40,10 +38,8 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnSuccessAndAllDataFields_ForInputFileAsStream()
         {
-            var pdFtk = new PDFtk();
-
             var stream = File.OpenRead("TestFiles/Form.pdf");
-            var result = await pdFtk.DumpDataFields(stream);
+            var result = await _pdFtk.DumpDataFields(stream);
 
             result.Success.Should().BeTrue();
             result.Result.Should().BeEquivalentTo(
@@ -55,9 +51,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnUnsuccessfulAndNullResult()
         {
-            var pdFtk = new PDFtk();
-
-            var result = await pdFtk.DumpDataFields(Guid.NewGuid().ToByteArray());
+            var result = await _pdFtk.DumpDataFields(Guid.NewGuid().ToByteArray());
 
             result.Success.Should().BeFalse();
             result.Result.Should().BeEmpty();
