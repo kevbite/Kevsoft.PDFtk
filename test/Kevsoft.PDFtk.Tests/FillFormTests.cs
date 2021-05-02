@@ -36,7 +36,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldFillPdfForm_ForInputFileAsStream()
         {
-            var fileStream = File.OpenRead(TestFiles.FormFilePath);
+            await using var fileStream = File.OpenRead(TestFiles.FormFilePath);
 
             var result = await _pdFtk.FillForm(fileStream, FieldData, false, false);
 

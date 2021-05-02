@@ -25,8 +25,8 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnStampedPdf_ForInputFilesAsStreams()
         {
-            var inputFileStream = File.OpenRead(TestFiles.TestFile1Path);
-            var stampFileStream = File.OpenRead(TestFiles.StampFilePath);
+            await using var inputFileStream = File.OpenRead(TestFiles.TestFile1Path);
+            await using var stampFileStream = File.OpenRead(TestFiles.StampFilePath);
 
             var result = await _pdFtk.Stamp(inputFileStream, stampFileStream);
 

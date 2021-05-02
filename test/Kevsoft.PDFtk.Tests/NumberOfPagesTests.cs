@@ -33,7 +33,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnSuccessAndCorrectTotalNumberOfPages_ForStream()
         {
-            var stream = File.OpenRead(TestFiles.TestFile1Path);
+            await using var stream = File.OpenRead(TestFiles.TestFile1Path);
             var result = await _pdFtk.GetNumberOfPages(stream);
                 
             result.Success.Should().BeTrue();

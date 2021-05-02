@@ -38,7 +38,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnSuccessAndAllDataFields_ForInputFileAsStream()
         {
-            var stream = File.OpenRead(TestFiles.FormFilePath);
+            await using var stream = File.OpenRead(TestFiles.FormFilePath);
             var result = await _pdFtk.DumpDataFields(stream);
 
             result.Success.Should().BeTrue();

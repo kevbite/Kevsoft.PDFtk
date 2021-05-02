@@ -24,7 +24,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnSinglePages_ForInputFileAsStream()
         {
-            var stream = File.OpenRead(TestFiles.TestFile1Path);
+            await using var stream = File.OpenRead(TestFiles.TestFile1Path);
             
             var result = await _pdFtk.Split(stream);
 
