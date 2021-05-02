@@ -163,15 +163,27 @@ namespace Kevsoft.PDFtk
             }
         }
 
-        public async Task<IPDFtkResult<IEnumerable<byte[]>>> Split(byte[] file)
+        public async Task<IPDFtkResult<IEnumerable<byte[]>>> Split(byte[] pdfFile)
         {
-            using var inputFile = await TempPDFtkFile.FromBytes(file);
+            using var inputFile = await TempPDFtkFile.FromBytes(pdfFile);
 
+            return await Split(inputFile.TempFileName);
+        }
+        
+        public async Task<IPDFtkResult<IEnumerable<byte[]>>> Split(Stream stream)
+        {
+            using var inputFile = await TempPDFtkFile.FromStream(stream);
+
+            return await Split(inputFile.TempFileName);
+        }
+
+        public async Task<IPDFtkResult<IEnumerable<byte[]>>> Split(string filePath)
+        {
             using var outputDirectory = TempPDFtkDirectory.Create();
 
             var outputFilePattern = Path.Combine(outputDirectory.TempDirectoryFullName, "page_%02d.pdf");
             var executeProcessResult =
-                await _pdftkProcess.Execute(inputFile.TempFileName, "burst", "output", outputFilePattern);
+                await _pdftkProcess.Execute(filePath, "burst", "output", outputFilePattern);
 
             var outputFileBytes = new List<byte[]>();
             if (executeProcessResult.Success)

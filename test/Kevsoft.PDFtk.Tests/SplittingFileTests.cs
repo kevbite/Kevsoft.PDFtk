@@ -9,13 +9,37 @@ namespace Kevsoft.PDFtk.Tests
     public class SplittingFileTests
     {
         [Fact]
-        public async Task ShouldReturnSinglePages()
+        public async Task ShouldReturnSinglePages_ForInputFileAsBytes()
         {
             var pdFtk = new PDFtk();
 
             var fileByes = await File.ReadAllBytesAsync("TestFiles/TestFile1.pdf");
             
             var result = await pdFtk.Split(fileByes);
+
+            result.Success.Should().BeTrue();
+            result.Result.Should().HaveCount(10);
+        }
+        
+        [Fact]
+        public async Task ShouldReturnSinglePages_ForInputFileAsStream()
+        {
+            var pdFtk = new PDFtk();
+
+            var stream = File.OpenRead("TestFiles/TestFile1.pdf");
+            
+            var result = await pdFtk.Split(stream);
+
+            result.Success.Should().BeTrue();
+            result.Result.Should().HaveCount(10);
+        }
+        
+        [Fact]
+        public async Task ShouldReturnSinglePages_ForInputFileAsFilePath()
+        {
+            var pdFtk = new PDFtk();
+
+            var result = await pdFtk.Split("TestFiles/TestFile1.pdf");
 
             result.Success.Should().BeTrue();
             result.Result.Should().HaveCount(10);
