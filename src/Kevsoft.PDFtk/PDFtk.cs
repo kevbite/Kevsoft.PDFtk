@@ -254,12 +254,37 @@ namespace Kevsoft.PDFtk
             bool dropXfa)
         {
             using var inputFile = await TempPDFtkFile.FromBytes(pdfFile);
+
+            return await FillForm(inputFile.TempFileName,
+                fieldData,
+                flatten,
+                dropXfa);
+        }
+        
+        public async Task<IPDFtkResult<byte[]>> FillForm(Stream stream,
+            IReadOnlyDictionary<string, string> fieldData,
+            bool flatten,
+            bool dropXfa)
+        {
+            using var inputFile = await TempPDFtkFile.FromStream(stream);
+
+            return await FillForm(inputFile.TempFileName,
+                fieldData,
+                flatten,
+                dropXfa);
+        }
+
+        public async Task<IPDFtkResult<byte[]>> FillForm(string pdfFilePath,
+            IReadOnlyDictionary<string, string> fieldData,
+            bool flatten,
+            bool dropXfa)
+        {
             using var outputFile = TempPDFtkFile.Create();
             using var xfdfFile = await _xfdfGenerator.CreateXfdfFile(fieldData);
 
             var args = new List<string>(new[]
             {
-                inputFile.TempFileName,
+                pdfFilePath,
                 "fill_form",
                 xfdfFile.TempFileName,
                 "output",

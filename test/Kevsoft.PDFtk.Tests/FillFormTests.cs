@@ -10,27 +10,59 @@ namespace Kevsoft.PDFtk.Tests
 {
     public class FillFormTests
     {
+        private static readonly Dictionary<string, string> FieldData = new()
+        {
+            ["Given Name Text Box"] = Guid.NewGuid().ToString(),
+            ["Language 3 Check Box"] = "Yes",
+        };
+
         [Fact]
-        public async Task ShouldFillPdfForm()
+        public async Task ShouldFillPdfForm_ForInputFileAsBytes()
         {
             var pdFtk = new PDFtk();
 
-            var fieldData = new Dictionary<string, string>
-            {
-                ["Given Name Text Box"] = Guid.NewGuid().ToString(),
-                ["Language 3 Check Box"] = "Yes",
-            };
-
             var fileBytes = await File.ReadAllBytesAsync("TestFiles/Form.pdf");
 
-            var result = await pdFtk.FillForm(fileBytes, fieldData, false, false);
+            var result = await pdFtk.FillForm(fileBytes, FieldData, false, false);
 
             result.Success.Should().BeTrue();
             var dumpDataFields = await pdFtk.DumpDataFields(result.Result);
-            dumpDataFields.Result.Where(x => fieldData.Keys.Contains(x.FieldName))
+            dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName))
                 .ToDictionary(x => x.FieldName!, field => field.FieldValue)
                 .Should()
-                .BeEquivalentTo(fieldData);
+                .BeEquivalentTo(FieldData);
+        }
+        
+        [Fact]
+        public async Task ShouldFillPdfForm_ForInputFileAsStream()
+        {
+            var pdFtk = new PDFtk();
+
+            var fileStream = File.OpenRead("TestFiles/Form.pdf");
+
+            var result = await pdFtk.FillForm(fileStream, FieldData, false, false);
+
+            result.Success.Should().BeTrue();
+            var dumpDataFields = await pdFtk.DumpDataFields(result.Result);
+            dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName))
+                .ToDictionary(x => x.FieldName!, field => field.FieldValue)
+                .Should()
+                .BeEquivalentTo(FieldData);
+        }
+        
+        [Fact]
+        public async Task ShouldFillPdfForm_ForInputFileAsFilePath()
+        {
+            var pdFtk = new PDFtk();
+
+            var result = await pdFtk.FillForm("TestFiles/Form.pdf", FieldData, false, false);
+
+            result.Success.Should().BeTrue();
+            var dumpDataFields = await pdFtk.DumpDataFields(result.Result);
+            dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName))
+                .ToDictionary(x => x.FieldName!, field => field.FieldValue)
+                .Should()
+                .BeEquivalentTo(FieldData);
         }
 
         [Fact]
