@@ -13,7 +13,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnSinglePages_ForInputFileAsBytes()
         {
-            var fileByes = await File.ReadAllBytesAsync("TestFiles/TestFile1.pdf");
+            var fileByes = await File.ReadAllBytesAsync(TestFiles.TestFile1Path);
             
             var result = await _pdFtk.Split(fileByes);
 
@@ -24,7 +24,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnSinglePages_ForInputFileAsStream()
         {
-            var stream = File.OpenRead("TestFiles/TestFile1.pdf");
+            var stream = File.OpenRead(TestFiles.TestFile1Path);
             
             var result = await _pdFtk.Split(stream);
 
@@ -35,7 +35,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnSinglePages_ForInputFileAsFilePath()
         {
-            var result = await _pdFtk.Split("TestFiles/TestFile1.pdf");
+            var result = await _pdFtk.Split(TestFiles.TestFile1Path);
 
             result.Success.Should().BeTrue();
             result.Result.Should().HaveCount(10);

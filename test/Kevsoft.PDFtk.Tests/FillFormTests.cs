@@ -21,7 +21,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldFillPdfForm_ForInputFileAsBytes()
         {
-            var fileBytes = await File.ReadAllBytesAsync("TestFiles/Form.pdf");
+            var fileBytes = await File.ReadAllBytesAsync(TestFiles.FormFilePath);
 
             var result = await _pdFtk.FillForm(fileBytes, FieldData, false, false);
 
@@ -36,7 +36,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldFillPdfForm_ForInputFileAsStream()
         {
-            var fileStream = File.OpenRead("TestFiles/Form.pdf");
+            var fileStream = File.OpenRead(TestFiles.FormFilePath);
 
             var result = await _pdFtk.FillForm(fileStream, FieldData, false, false);
 
@@ -51,7 +51,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldFillPdfForm_ForInputFileAsFilePath()
         {
-            var result = await _pdFtk.FillForm("TestFiles/Form.pdf", FieldData, false, false);
+            var result = await _pdFtk.FillForm(TestFiles.FormFilePath, FieldData, false, false);
 
             result.Success.Should().BeTrue();
             var dumpDataFields = await _pdFtk.DumpDataFields(result.Result);
