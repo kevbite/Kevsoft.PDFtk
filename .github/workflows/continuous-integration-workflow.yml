@@ -35,13 +35,17 @@ jobs:
       if: ${{ env.RUN_DEPLOY }}
       run: |
         dotnet nuget push ./src/Kevsoft.PDFtk/bin/Release/*.nupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
-    - name: Upload Release Asset
+    - name: Create Release
+      id: create_release
       if: ${{ env.RUN_DEPLOY }}
-      uses: softprops/action-gh-release@v1
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        files: |
-          ./**/*.nuget
-          ./**/*.snupkg
+        tag_name: ${{ env.VERSION }}
+        release_name: Release ${{ env.VERSION }}
+        body: |
+          Release ${{ env.VERSION }}
+        draft: false
+        prerelease: false
 
