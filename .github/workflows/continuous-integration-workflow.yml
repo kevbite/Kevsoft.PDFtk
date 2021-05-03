@@ -1,0 +1,60 @@
+name: Continuous Integration Workflow
+
+on: [push]
+
+jobs:
+  build:
+    strategy:
+    matrix:
+      os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      VERSION: 0.0.${{ github.run_number }}-preview
+      RUN_DEPLOY:  ${{ matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/main' }}
+    steps:
+    - name: Install PDFtk Server CLI
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: sudo apt-get pdftk
+    - name: Install PDFtk Server CLI
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: choco install pdftk-server
+    - uses: actions/checkout@v2
+    - name: Setup .NET 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release -p:Version=${{ env.VERSION }} --no-restore
+    - name: Pack
+      run: dotnet pack --configuration Release -p:Version=${{ env.VERSION }} --no-build --verbosity normal
+    - name: Test
+      run: dotnet test --configuration Release --no-build --verbosity normal
+    - name: NuGet.Org push
+      if: ${{ env.RUN_DEPLOY }}
+      run: |
+        dotnet nuget push ./src/Kevsoft.PDFtk/bin/Release/*.nupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
+    - name: Create Release
+      id: create_release
+      if: ${{ env.RUN_DEPLOY }}
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.VERSION }}
+        release_name: Release ${{ env.VERSION }}
+        body: |
+          Release ${{ env.VERSION }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      if: ${{ env.RUN_DEPLOY }}
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ./src/Kevsoft.PDFtk/bin/Release/*.
+        
