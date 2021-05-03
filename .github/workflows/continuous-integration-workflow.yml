@@ -17,7 +17,10 @@ jobs:
       run: sudo apt-get install pdftk
     - name: Install PDFtk Server CLI
       if: ${{ matrix.os == 'windows-latest' }}
-      run: choco install pdftk-server
+      run: | 
+        choco install pdftk-server
+        refreshenv
+        echo $env:path
     - uses: actions/checkout@v2
     - name: Setup .NET 5
       uses: actions/setup-dotnet@v1
