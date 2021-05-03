@@ -4,4 +4,34 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Title>Kevsoft.PDFtk</Title>
+    <AssemblyName>Kevsoft.PDFtk</AssemblyName>
+    <PackageId>Kevsoft.PDFtk</PackageId>
+    <Authors>Kevin Smith</Authors>
+    <Company>Kevsoft</Company>
+    <AssemblyTitle>Kevsoft.PDFtk</AssemblyTitle>
+    <Description>
+        A wrapper around the PDFtk server,
+        which is used for server side processing of PDF documents such
+        Merging, splitting, rotating, decrypting, encrypting, filling, stamping.
+    </Description>
+    <Copyright>Copyright © Kevsoft 2021</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageTags>PDFtk;pdf</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/kevbite/Kevsoft.PDFtk</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/kevbite/Kevsoft.PDFtk.git</RepositoryUrl>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
 </Project>
