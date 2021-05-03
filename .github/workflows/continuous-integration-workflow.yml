@@ -35,7 +35,6 @@ jobs:
       if: ${{ env.RUN_DEPLOY }}
       run: |
         dotnet nuget push ./src/Kevsoft.PDFtk/bin/Release/*.nupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
-        dotnet nuget push ./src/Kevsoft.PDFtk/bin/Release/*.snupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
     - name: Create Release
       id: create_release
       if: ${{ env.RUN_DEPLOY }}
