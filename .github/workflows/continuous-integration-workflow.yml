@@ -20,7 +20,7 @@ jobs:
       run: | 
         choco install pdftk-server
         refreshenv
-        echo $env:path
+        echo "C:\Program Files (x86)\PDFtk Server\bin\" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
     - uses: actions/checkout@v2
     - name: Setup .NET 5
       uses: actions/setup-dotnet@v1
