@@ -5,8 +5,8 @@ on: [push]
 jobs:
   build:
     strategy:
-    matrix:
-      os: [ubuntu-latest, windows-latest]
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     env:
       VERSION: 0.0.${{ github.run_number }}-preview
