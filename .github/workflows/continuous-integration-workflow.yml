@@ -35,36 +35,13 @@ jobs:
       if: ${{ env.RUN_DEPLOY }}
       run: |
         dotnet nuget push ./src/Kevsoft.PDFtk/bin/Release/*.nupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
-    - name: Create Release
-      id: create_release
-      if: ${{ env.RUN_DEPLOY }}
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ env.VERSION }}
-        release_name: Release ${{ env.VERSION }}
-        body: |
-          Release ${{ env.VERSION }}
-        draft: false
-        prerelease: false
     - name: Upload Release Asset
       if: ${{ env.RUN_DEPLOY }}
-      uses: actions/upload-release-asset@v1
+      uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./src/Kevsoft.PDFtk/bin/Release/*.nupkg
-        asset_name: NuGet Package
-        asset_content_type: application/zip
-    - name: Upload Release Asset
-      if: ${{ env.RUN_DEPLOY }}
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./src/Kevsoft.PDFtk/bin/Release/*.snupkg
-        asset_name: Symbol Packages
-        asset_content_type: application/zip
+        files: |
+          ./**/*.nuget
+          ./**/*.snupkg
+
