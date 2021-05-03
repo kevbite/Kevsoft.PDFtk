@@ -48,4 +48,24 @@ jobs:
           Release ${{ env.VERSION }}
         draft: false
         prerelease: false
+    - name: Upload Release Asset
+      if: ${{ env.RUN_DEPLOY }}
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ./src/Kevsoft.PDFtk/bin/Release/*.nupkg
+        asset_name: NuGet Package
+        asset_content_type: application/zip
+    - name: Upload Release Asset
+      if: ${{ env.RUN_DEPLOY }}
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.VERSION }}
+        files: |
+          ./**/*.nuget
+          ./src/Kevsoft.PDFtk/bin/Release/*.snupkg
 
