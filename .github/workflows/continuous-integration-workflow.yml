@@ -35,11 +35,11 @@ jobs:
     - name: Test
       run: dotnet test --configuration Release --no-build --verbosity normal
     - name: NuGet.Org push
-      if: ${{ env.RUN_DEPLOY }}
+      if: ${{ env.RUN_DEPLOY == true }}
       run: |
         dotnet nuget push ./src/Kevsoft.PDFtk/bin/Release/*.nupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
     - name: Upload Release Asset
-      if: ${{ env.RUN_DEPLOY }}
+      if: ${{ env.RUN_DEPLOY == true }}
       uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
