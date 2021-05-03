@@ -18,11 +18,10 @@ namespace Kevsoft.PDFtk.Tests
 
             result.Success.Should().BeTrue();
             result.Result.Should().BeEquivalentTo(
-                ExpectedTestDataFields,
-                options => options.WithStrictOrdering()
+                ExpectedTestDataFields
             );
         }
-        
+
         [Fact]
         public async Task ShouldReturnSuccessAndAllDataFields_ForInputFileFilePath()
         {
@@ -30,11 +29,10 @@ namespace Kevsoft.PDFtk.Tests
 
             result.Success.Should().BeTrue();
             result.Result.Should().BeEquivalentTo(
-                ExpectedTestDataFields,
-                options => options.WithStrictOrdering()
+                ExpectedTestDataFields
             );
         }
-        
+
         [Fact]
         public async Task ShouldReturnSuccessAndAllDataFields_ForInputFileAsStream()
         {
@@ -43,8 +41,7 @@ namespace Kevsoft.PDFtk.Tests
 
             result.Success.Should().BeTrue();
             result.Result.Should().BeEquivalentTo(
-                ExpectedTestDataFields,
-                options => options.WithStrictOrdering()
+                ExpectedTestDataFields
             );
         }
 
@@ -165,7 +162,8 @@ namespace Kevsoft.PDFtk.Tests
                 FieldName = "Driving License Check Box",
                 FieldType = "Button",
                 FieldJustification = "Left",
-                FieldValue = "Off"
+                FieldValue = "Off",
+                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Off"
             },
             new TestDataField
             {
@@ -186,7 +184,8 @@ namespace Kevsoft.PDFtk.Tests
                 FieldName = "Language 1 Check Box",
                 FieldType = "Button",
                 FieldJustification = "Left",
-                FieldValue = "Off"
+                FieldValue = "Off",
+                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Off"
             },
             new TestDataField
             {
@@ -195,7 +194,8 @@ namespace Kevsoft.PDFtk.Tests
                 FieldName = "Language 2 Check Box",
                 FieldType = "Button",
                 FieldJustification = "Left",
-                FieldValue = "Yes"
+                FieldValue = "Yes",
+                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Yes"
             },
             new TestDataField
             {
@@ -204,7 +204,8 @@ namespace Kevsoft.PDFtk.Tests
                 FieldName = "Language 3 Check Box",
                 FieldType = "Button",
                 FieldJustification = "Left",
-                FieldValue = "Off"
+                FieldValue = "Off",
+                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Off",
             },
             new TestDataField
             {
@@ -213,7 +214,8 @@ namespace Kevsoft.PDFtk.Tests
                 FieldName = "Language 4 Check Box",
                 FieldType = "Button",
                 FieldJustification = "Left",
-                FieldValue = "Off"
+                FieldValue = "Off",
+                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Off",
             },
             new TestDataField
             {
@@ -222,7 +224,8 @@ namespace Kevsoft.PDFtk.Tests
                 FieldName = "Language 5 Check Box",
                 FieldType = "Button",
                 FieldJustification = "Left",
-                FieldValue = "Off"
+                FieldValue = "Off",
+                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Off"
             },
             new TestDataField
             {
