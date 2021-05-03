@@ -35,6 +35,7 @@ jobs:
       if: ${{ env.RUN_DEPLOY }}
       run: |
         dotnet nuget push ./src/Kevsoft.PDFtk/bin/Release/*.nupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
+        dotnet nuget push ./src/Kevsoft.PDFtk/bin/Release/*.snupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
     - name: Create Release
       id: create_release
       if: ${{ env.RUN_DEPLOY }}
@@ -56,5 +57,16 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./src/Kevsoft.PDFtk/bin/Release/*.
+        asset_path: ./src/Kevsoft.PDFtk/bin/Release/*.nupkg
+        asset_name: NuGet Package
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      if: ${{ env.RUN_DEPLOY }}
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ./src/Kevsoft.PDFtk/bin/Release/*.snupkg
+        asset_name: Symbol Packages
         
