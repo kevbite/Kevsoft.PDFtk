@@ -15,10 +15,14 @@ namespace Kevsoft.PDFtk.Tests
         {
             var pdfFile1Bytes = await File.ReadAllBytesAsync(TestFiles.TestFileWith2PagesPath);
             var pdfFile2Bytes = await File.ReadAllBytesAsync(TestFiles.TestFileWith3PagesPath);
-            var result = await _pdFtk.Concat(new[] {pdfFile1Bytes, pdfFile2Bytes});
+            var result = await _pdFtk.ConcatAsync(new[]
+            {
+                pdfFile1Bytes, 
+                pdfFile2Bytes
+            });
 
             result.Success.Should().BeTrue();
-            (await _pdFtk.GetNumberOfPages(result.Result))
+            (await _pdFtk.GetNumberOfPagesAsync(result.Result))
                 .Result.Should().Be(5);
         }
         
@@ -27,10 +31,10 @@ namespace Kevsoft.PDFtk.Tests
         {
             await using var pdfFile1Stream = File.OpenRead(TestFiles.TestFileWith2PagesPath);
             await using var pdfFile2Stream = File.OpenRead(TestFiles.TestFileWith3PagesPath);
-            var result = await _pdFtk.Concat(new[] {pdfFile1Stream, pdfFile2Stream});
+            var result = await _pdFtk.ConcatAsync(new[] {pdfFile1Stream, pdfFile2Stream});
 
             result.Success.Should().BeTrue();
-            (await _pdFtk.GetNumberOfPages(result.Result))
+            (await _pdFtk.GetNumberOfPagesAsync(result.Result))
                 .Result.Should().Be(5);
         }
         
@@ -38,17 +42,17 @@ namespace Kevsoft.PDFtk.Tests
         public async Task ShouldReturnPdfWithCorrectPages_ForInputFilesAsFilePaths()
         {
             var filePaths = new[] {TestFiles.TestFileWith2PagesPath, TestFiles.TestFileWith3PagesPath};
-            var result = await _pdFtk.Concat(filePaths);
+            var result = await _pdFtk.ConcatAsync(filePaths);
 
             result.Success.Should().BeTrue();
-            (await _pdFtk.GetNumberOfPages(result.Result))
+            (await _pdFtk.GetNumberOfPagesAsync(result.Result))
                 .Result.Should().Be(5);
         }
         
         [Fact]
         public async Task ShouldReturnUnsuccessfulAndEmptyResult_ForInvalidPdfFiles()
         {
-            var result = await _pdFtk.Concat(new[]
+            var result = await _pdFtk.ConcatAsync(new[]
             {
                 Guid.NewGuid().ToByteArray(),
                 Guid.NewGuid().ToByteArray()

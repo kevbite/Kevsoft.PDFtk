@@ -14,10 +14,10 @@ namespace Kevsoft.PDFtk.Tests
         public async Task ShouldReturnPagesFromAnotherPdf_ForInputFileAsBytes()
         {
             var pdfFileBytes = await File.ReadAllBytesAsync(TestFiles.TestFile1Path);
-            var result = await _pdFtk.GetPages(pdfFileBytes, 1,5,6,7,10);
+            var result = await _pdFtk.GetPagesAsync(pdfFileBytes, 1,5,6,7,10);
                 
             result.Success.Should().BeTrue();
-            (await _pdFtk.GetNumberOfPages(result.Result))
+            (await _pdFtk.GetNumberOfPagesAsync(result.Result))
                 .Result.Should().Be(5);
         }
         
@@ -25,20 +25,20 @@ namespace Kevsoft.PDFtk.Tests
         public async Task ShouldReturnPagesFromAnotherPdf_ForInputFileAsStream()
         {
             await using var stream = File.OpenRead(TestFiles.TestFile1Path);
-            var result = await _pdFtk.GetPages(stream, 1,5,6,7,10);
+            var result = await _pdFtk.GetPagesAsync(stream, 1,5,6,7,10);
                 
             result.Success.Should().BeTrue();
-            (await _pdFtk.GetNumberOfPages(result.Result))
+            (await _pdFtk.GetNumberOfPagesAsync(result.Result))
                 .Result.Should().Be(5);
         }
         
         [Fact]
         public async Task ShouldReturnPagesFromAnotherPdf_ForInputFileFilePath()
         {
-            var result = await _pdFtk.GetPages(TestFiles.TestFile1Path, 1,5,6,7,10);
+            var result = await _pdFtk.GetPagesAsync(TestFiles.TestFile1Path, 1,5,6,7,10);
                 
             result.Success.Should().BeTrue();
-            (await _pdFtk.GetNumberOfPages(result.Result))
+            (await _pdFtk.GetNumberOfPagesAsync(result.Result))
                 .Result.Should().Be(5);
         }
         
@@ -46,7 +46,7 @@ namespace Kevsoft.PDFtk.Tests
         public async Task ShouldReturnUnsuccessfulAndEmptyResult_ForInvalidPageNumbers()
         {
             var pdfFileBytes = await File.ReadAllBytesAsync(TestFiles.TestFile1Path);
-            var result = await _pdFtk.GetPages(pdfFileBytes, 15, 16);
+            var result = await _pdFtk.GetPagesAsync(pdfFileBytes, 15, 16);
             
             result.Success.Should().BeFalse();
             result.Result.Should().BeEmpty();
@@ -55,7 +55,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnUnsuccessfulAndEmptyResult_ForInvalidPdfFile()
         {
-            var result = await _pdFtk.GetPages(Guid.NewGuid().ToByteArray(), 1,5,6,7,10);
+            var result = await _pdFtk.GetPagesAsync(Guid.NewGuid().ToByteArray(), 1,5,6,7,10);
         
             result.Success.Should().BeFalse();
             result.Result.Should().BeEmpty();

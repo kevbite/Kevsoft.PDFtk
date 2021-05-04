@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Kevsoft.PDFtk
 {
-    public sealed class TempPDFtkFile : IDisposable
+    internal sealed class TempPDFtkFile : IDisposable
     {
         public string TempFileName { get; }
 
@@ -13,7 +13,7 @@ namespace Kevsoft.PDFtk
             TempFileName = Path.GetTempFileName();
         }
 
-        public static async Task<TempPDFtkFile> FromBytes(byte[] pdfFileBytes)
+        public static async Task<TempPDFtkFile> FromAsync(byte[] pdfFileBytes)
         {
             var tempPdFtkFile = new TempPDFtkFile();
             if (pdfFileBytes is not null)
@@ -29,7 +29,7 @@ namespace Kevsoft.PDFtk
             return new();
         }
 
-        public static async Task<TempPDFtkFile> FromStream(Stream stream)
+        public static async Task<TempPDFtkFile> FromAsync(Stream stream)
         {
             var tempPdFtkFile = new TempPDFtkFile();
 

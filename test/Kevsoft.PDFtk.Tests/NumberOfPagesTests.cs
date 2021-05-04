@@ -15,7 +15,7 @@ namespace Kevsoft.PDFtk.Tests
         {
             var pdfFileBytes = await File.ReadAllBytesAsync(TestFiles.TestFile1Path);
 
-            var result = await _pdFtk.GetNumberOfPages(pdfFileBytes);
+            var result = await _pdFtk.GetNumberOfPagesAsync(pdfFileBytes);
                 
             result.Success.Should().BeTrue();
             result.Result.Should().Be(10);
@@ -24,7 +24,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnSuccessAndCorrectTotalNumberOfPages_ForInputFileFilePath()
         {
-            var result = await _pdFtk.GetNumberOfPages(TestFiles.TestFile1Path);
+            var result = await _pdFtk.GetNumberOfPagesAsync(TestFiles.TestFile1Path);
                 
             result.Success.Should().BeTrue();
             result.Result.Should().Be(10);
@@ -34,7 +34,7 @@ namespace Kevsoft.PDFtk.Tests
         public async Task ShouldReturnSuccessAndCorrectTotalNumberOfPages_ForStream()
         {
             await using var stream = File.OpenRead(TestFiles.TestFile1Path);
-            var result = await _pdFtk.GetNumberOfPages(stream);
+            var result = await _pdFtk.GetNumberOfPagesAsync(stream);
                 
             result.Success.Should().BeTrue();
             result.Result.Should().Be(10);
@@ -43,7 +43,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnUnsuccessfulAndNullResult()
         {
-            var result = await _pdFtk.GetNumberOfPages(Guid.NewGuid().ToByteArray());
+            var result = await _pdFtk.GetNumberOfPagesAsync(Guid.NewGuid().ToByteArray());
 
             result.Success.Should().BeFalse();
             result.Result.Should().BeNull();

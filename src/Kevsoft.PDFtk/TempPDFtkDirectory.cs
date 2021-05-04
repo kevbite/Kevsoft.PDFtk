@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Kevsoft.PDFtk
 {
-    public sealed class TempPDFtkDirectory : IDisposable
+    internal sealed class TempPDFtkDirectory : IDisposable
     {
         private readonly DirectoryInfo _directoryInfo;
         public string TempDirectoryFullName => _directoryInfo.FullName;

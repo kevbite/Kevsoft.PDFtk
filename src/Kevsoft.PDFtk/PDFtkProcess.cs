@@ -7,7 +7,7 @@ namespace Kevsoft.PDFtk
 {
     internal sealed class PDFtkProcess
     {
-        internal async Task<ExecutionResult> Execute(params string[] args)
+        internal async Task<ExecutionResult> ExecuteAsync(params string[] args)
         {
             var process = new Process
             {
@@ -24,15 +24,15 @@ namespace Kevsoft.PDFtk
 
             process.Start();
 
-            var standardOutput = await GetAllStream(process.StandardOutput);
-            var standardError = await GetAllStream(process.StandardError);
+            var standardOutput = await GetAllStreamAsync(process.StandardOutput);
+            var standardError = await GetAllStreamAsync(process.StandardError);
 
             await process.WaitForExitAsync();
             
             return new ExecutionResult(process.ExitCode, standardOutput, standardError);
         }
 
-        private static async Task<string> GetAllStream(StreamReader stream)
+        private static async Task<string> GetAllStreamAsync(StreamReader stream)
         {
             var stringBuilder = new StringBuilder();
             while (!stream.EndOfStream)

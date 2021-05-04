@@ -1,6 +1,6 @@
 ﻿namespace Kevsoft.PDFtk
 {
-    public sealed class PDFtkResult<TResult> : IPDFtkResult<TResult>
+    internal sealed class PDFtkResult<TResult> : IPDFtkResult<TResult>
     {
         private readonly ExecutionResult _executionResult;
 

@@ -23,10 +23,10 @@ namespace Kevsoft.PDFtk.Tests
         {
             var fileBytes = await File.ReadAllBytesAsync(TestFiles.FormFilePath);
 
-            var result = await _pdFtk.FillForm(fileBytes, FieldData, false, false);
+            var result = await _pdFtk.FillFormAsync(fileBytes, FieldData, false, false);
 
             result.Success.Should().BeTrue();
-            var dumpDataFields = await _pdFtk.DumpDataFields(result.Result);
+            var dumpDataFields = await _pdFtk.GetDataFieldsAsync(result.Result);
             dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName))
                 .ToDictionary(x => x.FieldName!, field => field.FieldValue)
                 .Should()
@@ -38,10 +38,10 @@ namespace Kevsoft.PDFtk.Tests
         {
             await using var fileStream = File.OpenRead(TestFiles.FormFilePath);
 
-            var result = await _pdFtk.FillForm(fileStream, FieldData, false, false);
+            var result = await _pdFtk.FillFormAsync(fileStream, FieldData, false, false);
 
             result.Success.Should().BeTrue();
-            var dumpDataFields = await _pdFtk.DumpDataFields(result.Result);
+            var dumpDataFields = await _pdFtk.GetDataFieldsAsync(result.Result);
             dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName))
                 .ToDictionary(x => x.FieldName!, field => field.FieldValue)
                 .Should()
@@ -51,10 +51,10 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldFillPdfForm_ForInputFileAsFilePath()
         {
-            var result = await _pdFtk.FillForm(TestFiles.FormFilePath, FieldData, false, false);
+            var result = await _pdFtk.FillFormAsync(TestFiles.FormFilePath, FieldData, false, false);
 
             result.Success.Should().BeTrue();
-            var dumpDataFields = await _pdFtk.DumpDataFields(result.Result);
+            var dumpDataFields = await _pdFtk.GetDataFieldsAsync(result.Result);
             dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName))
                 .ToDictionary(x => x.FieldName!, field => field.FieldValue)
                 .Should()
@@ -66,7 +66,7 @@ namespace Kevsoft.PDFtk.Tests
         {
             var fileBytes = Guid.NewGuid().ToByteArray();
 
-            var result = await _pdFtk.FillForm(fileBytes, new Dictionary<string, string>(), false, false);
+            var result = await _pdFtk.FillFormAsync(fileBytes, new Dictionary<string, string>(), false, false);
 
             result.Success.Should().BeFalse();
             result.Result.Should().BeEmpty();

@@ -15,7 +15,7 @@ namespace Kevsoft.PDFtk.Tests
         {
             var fileByes = await File.ReadAllBytesAsync(TestFiles.TestFile1Path);
             
-            var result = await _pdFtk.Split(fileByes);
+            var result = await _pdFtk.SplitAsync(fileByes);
 
             result.Success.Should().BeTrue();
             result.Result.Should().HaveCount(10);
@@ -26,7 +26,7 @@ namespace Kevsoft.PDFtk.Tests
         {
             await using var stream = File.OpenRead(TestFiles.TestFile1Path);
             
-            var result = await _pdFtk.Split(stream);
+            var result = await _pdFtk.SplitAsync(stream);
 
             result.Success.Should().BeTrue();
             result.Result.Should().HaveCount(10);
@@ -35,7 +35,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnSinglePages_ForInputFileAsFilePath()
         {
-            var result = await _pdFtk.Split(TestFiles.TestFile1Path);
+            var result = await _pdFtk.SplitAsync(TestFiles.TestFile1Path);
 
             result.Success.Should().BeTrue();
             result.Result.Should().HaveCount(10);
@@ -44,7 +44,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnUnsuccessfulAndEmptyResult_ForInvalidPdfFile()
         {
-            var result = await _pdFtk.Concat(new[]
+            var result = await _pdFtk.ConcatAsync(new[]
             {
                 Guid.NewGuid().ToByteArray(),
                 Guid.NewGuid().ToByteArray()

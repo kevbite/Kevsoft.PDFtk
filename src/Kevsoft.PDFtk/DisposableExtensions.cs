@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Kevsoft.PDFtk
 {
-    public static class DisposableExtensions
+    internal static class DisposableExtensions
     {
         public static void Dispose(this IEnumerable<IDisposable> collection)
         {

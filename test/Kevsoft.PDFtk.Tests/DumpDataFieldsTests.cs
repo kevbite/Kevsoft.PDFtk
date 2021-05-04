@@ -14,7 +14,7 @@ namespace Kevsoft.PDFtk.Tests
         public async Task ShouldReturnSuccessAndAllDataFields_ForInputFileAsBytes()
         {
             var pdfFileBytes = await File.ReadAllBytesAsync(TestFiles.FormFilePath);
-            var result = await _pdFtk.DumpDataFields(pdfFileBytes);
+            var result = await _pdFtk.GetDataFieldsAsync(pdfFileBytes);
 
             result.Success.Should().BeTrue();
             result.Result.Should().BeEquivalentTo(
@@ -25,7 +25,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnSuccessAndAllDataFields_ForInputFileFilePath()
         {
-            var result = await _pdFtk.DumpDataFields(TestFiles.FormFilePath);
+            var result = await _pdFtk.GetDataFieldsAsync(TestFiles.FormFilePath);
 
             result.Success.Should().BeTrue();
             result.Result.Should().BeEquivalentTo(
@@ -37,7 +37,7 @@ namespace Kevsoft.PDFtk.Tests
         public async Task ShouldReturnSuccessAndAllDataFields_ForInputFileAsStream()
         {
             await using var stream = File.OpenRead(TestFiles.FormFilePath);
-            var result = await _pdFtk.DumpDataFields(stream);
+            var result = await _pdFtk.GetDataFieldsAsync(stream);
 
             result.Success.Should().BeTrue();
             result.Result.Should().BeEquivalentTo(
@@ -48,7 +48,7 @@ namespace Kevsoft.PDFtk.Tests
         [Fact]
         public async Task ShouldReturnUnsuccessfulAndNullResult()
         {
-            var result = await _pdFtk.DumpDataFields(Guid.NewGuid().ToByteArray());
+            var result = await _pdFtk.GetDataFieldsAsync(Guid.NewGuid().ToByteArray());
 
             result.Success.Should().BeFalse();
             result.Result.Should().BeEmpty();

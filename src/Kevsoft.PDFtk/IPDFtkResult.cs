@@ -2,10 +2,10 @@
 {
     public interface IPDFtkResult<out TResult>
     {
-        public string StandardOutput  { get; }
-        public string StandardError { get; }
-        public TResult Result { get; }
-        public int ExitCode { get; }
-        public bool Success { get; }
+        string StandardOutput  { get; }
+        string StandardError { get; }
+        TResult Result { get; }
+        int ExitCode { get; }
+        bool Success { get; }
     }
 }
