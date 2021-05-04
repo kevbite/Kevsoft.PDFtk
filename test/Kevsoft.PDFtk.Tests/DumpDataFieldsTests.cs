@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -163,7 +164,7 @@ namespace Kevsoft.PDFtk.Tests
                 FieldType = "Button",
                 FieldJustification = "Left",
                 FieldValue = "Off",
-                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Off"
+                FieldValueDefault = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off"
             },
             new TestDataField
             {
@@ -185,7 +186,7 @@ namespace Kevsoft.PDFtk.Tests
                 FieldType = "Button",
                 FieldJustification = "Left",
                 FieldValue = "Off",
-                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Off"
+                FieldValueDefault =  RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off"
             },
             new TestDataField
             {
@@ -195,7 +196,7 @@ namespace Kevsoft.PDFtk.Tests
                 FieldType = "Button",
                 FieldJustification = "Left",
                 FieldValue = "Yes",
-                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Yes"
+                FieldValueDefault =  RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Yes"
             },
             new TestDataField
             {
@@ -205,7 +206,7 @@ namespace Kevsoft.PDFtk.Tests
                 FieldType = "Button",
                 FieldJustification = "Left",
                 FieldValue = "Off",
-                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Off",
+                FieldValueDefault =  RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off",
             },
             new TestDataField
             {
@@ -215,7 +216,7 @@ namespace Kevsoft.PDFtk.Tests
                 FieldType = "Button",
                 FieldJustification = "Left",
                 FieldValue = "Off",
-                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Off",
+                FieldValueDefault =  RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off",
             },
             new TestDataField
             {
@@ -225,7 +226,7 @@ namespace Kevsoft.PDFtk.Tests
                 FieldType = "Button",
                 FieldJustification = "Left",
                 FieldValue = "Off",
-                FieldValueDefault = OperatingSystem.IsWindows() ? null : "Off"
+                FieldValueDefault =  RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off"
             },
             new TestDataField
             {

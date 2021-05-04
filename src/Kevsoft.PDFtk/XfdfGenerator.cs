@@ -15,8 +15,13 @@ namespace Kevsoft.PDFtk
                 Async = true
             };
 
+#if NETSTANDARD2_1
+            using var xmlWriter =
+                XmlWriter.Create(inputFile.TempFileName, xmlWriterSettings);
+#else
             await using var xmlWriter =
                 XmlWriter.Create(inputFile.TempFileName, xmlWriterSettings);
+#endif
 
             await WriteXmlDocument(xmlWriter, fieldData);
 

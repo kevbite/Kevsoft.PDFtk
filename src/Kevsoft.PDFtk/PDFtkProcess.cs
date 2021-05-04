@@ -27,7 +27,11 @@ namespace Kevsoft.PDFtk
             var standardOutput = await GetAllStreamAsync(process.StandardOutput);
             var standardError = await GetAllStreamAsync(process.StandardError);
 
+#if NETSTANDARD2_1
+            process.WaitForExit();
+#else
             await process.WaitForExitAsync();
+#endif
             
             return new ExecutionResult(process.ExitCode, standardOutput, standardError);
         }
