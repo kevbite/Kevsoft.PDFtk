@@ -72,7 +72,7 @@ var result = await _pdFtk.FillFormAsync(
    pdfFile: await File.ReadAllBytesAsync("myForm.pdf"),
    fieldData: FieldData,
    flatten: false,
-   dropXfa: dropfalse
+   dropXfa: false
 );
 
 if(result.Success)
