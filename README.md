@@ -60,7 +60,7 @@ dotnet add package Kevsoft.PDFtk
 Fill a PDF with given data and returns the PDF bytes.
 
 ```csharp
-var pdFtk = new PDFtk();
+var pdftk = new PDFtk();
 
 var fieldData = new Dictionary<string, string>()
 {
@@ -68,7 +68,7 @@ var fieldData = new Dictionary<string, string>()
    ["Language 3 Check Box"] = "Yes"
 };
 
-var result = await _pdFtk.FillFormAsync(
+var result = await pdftk.FillFormAsync(
    pdfFile: await File.ReadAllBytesAsync("myForm.pdf"),
    fieldData: FieldData,
    flatten: false,
@@ -86,9 +86,10 @@ if(result.Success)
 Read PDF and output form field statistics.
 
 ```csharp
-var pdFtk = new PDFtk();
+var pdftk = new PDFtk();
 
-var result = await pdFtk.GetDataFieldsAsync(File.ReadAllBytesAsync("Form.pdf"));
+var pdfBytes = await File.ReadAllBytesAsync("Form.pdf");
+var result = await pdftk.GetDataFieldsAsync(pdfBytes);
 
 if(result.Success)
 {
@@ -116,12 +117,12 @@ public interface IDataField
 Merge multiple PDFs into one single PDF and returns the PDF bytes.
 
 ```csharp
-var pdFtk = new PDFtk();
+var pdftk = new PDFtk();
 
-var result = await pdFtk.ConcatAsync(new[]
+var result = await pdftk.ConcatAsync(new[]
 {
-    File.ReadAllBytesAsync("Pdf1.pdf"),
-    File.ReadAllBytesAsync("Pdf2.pdf")
+    await File.ReadAllBytesAsync("Pdf1.pdf"),
+    await File.ReadAllBytesAsync("Pdf2.pdf")
 });
 
 if(result.Success)
@@ -135,10 +136,11 @@ if(result.Success)
 Concatenate a list of page ranges into one single file and returns the PDF bytes.
 
 ```csharp
-var pdFtk = new PDFtk();
+var pdftk = new PDFtk();
 
 var pages = new []{ 1, 5, 6, 7, 10 };
-var result = await pdFtk.GetPagesAsync(File.ReadAllBytesAsync("Form.pdf"), pages);
+var pdfBytes = await File.ReadAllBytesAsync("Form.pdf");
+var result = await pdftk.GetPagesAsync(pdfBytes, pages);
 
 if(result.Success)
 {
@@ -151,9 +153,10 @@ if(result.Success)
 Split a single PDF in many pages and return a list of PDF bytes.
 
 ```csharp
-var pdFtk = new PDFtk();
-            
-var result = await pdFtk.SplitAsync(File.ReadAllBytesAsync("Form.pdf"));
+var pdftk = new PDFtk();
+
+var pdfBytes = await File.ReadAllBytesAsync("Form.pdf");
+var result = await pdftk.SplitAsync(pdfBytes);
 
 if(result.Success)
 {
@@ -169,9 +172,10 @@ if(result.Success)
 Return the number of pages for a PDF bytes.
 
 ```csharp
-var pdFtk = new PDFtk();
-            
-var result = await pdFtk.GetNumberOfPagesAsync(File.ReadAllBytesAsync("Form.pdf"));
+var pdftk = new PDFtk();
+
+var pdfBytes = await File.ReadAllBytesAsync("Form.pdf");
+var result = await pdftk.GetNumberOfPagesAsync(pdfBytes);
 
 if(result.Success)
 {
@@ -184,11 +188,11 @@ if(result.Success)
 Applies a stamp to the PDF file.
 
 ```csharp
-var pdFtk = new PDFtk();
+var pdftk = new PDFtk();
 
-var result = await pdFtk.StampAsync(
-    File.ReadAllBytesAsync("MyDocument.pdf"),
-    File.ReadAllBytesAsync("Stamp.pdf")
+var result = await pdftk.StampAsync(
+    await File.ReadAllBytesAsync("MyDocument.pdf"),
+    await File.ReadAllBytesAsync("Stamp.pdf")
 );
 
 if(result.Success)
