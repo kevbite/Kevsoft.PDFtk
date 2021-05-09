@@ -39,11 +39,11 @@ jobs:
     - name: Test
       run: dotnet test --configuration Release --no-build --verbosity normal
     - name: NuGet.Org push
-      if: ${{ env.RUN_DEPLOY == true }}
+      if: ${{ fromJSON(env.RUN_DEPLOY) }}
       run: |
         dotnet nuget push ./artifacts/*.nupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
     - name: Upload Release Asset
-      if: ${{ env.RUN_DEPLOY == true }}
+      if: ${{ fromJSON(env.RUN_DEPLOY) }}
       uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
