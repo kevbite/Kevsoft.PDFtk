@@ -106,7 +106,7 @@ namespace WebApplicationFillForm.Pages
         [BindProperty] public bool Esperanto { get; set; } = false;
         [BindProperty] public bool Latin { get; set; } = false;
 
-        public string FavouriteColour { get; set; } = string.Empty;
+        [BindProperty] public string FavouriteColour { get; set; } = string.Empty;
 
         public void OnGet()
         {
