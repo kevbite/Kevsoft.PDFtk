@@ -9,7 +9,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     env:
-      VERSION: 0.0.${{ github.run_number }}-preview
+      VERSION: 0.0.${{ github.run_number }}
       RUN_DEPLOY:  ${{ matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/main' }}
     steps:
     - name: Install PDFtk Server CLI
