@@ -13,9 +13,9 @@ namespace WebApplicationFillForm.Pages
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
-        private readonly PDFtk _pdFtk;
+        private readonly IPDFtk _pdFtk;
 
-        public IndexModel(PDFtk pdFtk, ILogger<IndexModel> logger)
+        public IndexModel(IPDFtk pdFtk, ILogger<IndexModel> logger)
         {
             _pdFtk = pdFtk;
             _logger = logger;

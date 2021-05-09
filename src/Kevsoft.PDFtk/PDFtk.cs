@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kevsoft.PDFtk
 {
-    public sealed class PDFtk
+    public sealed class PDFtk : IPDFtk
     {
         private readonly XfdfGenerator _xfdfGenerator;
         private readonly PDFtkProcess _pdftkProcess;
