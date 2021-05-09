@@ -35,13 +35,13 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release -p:Version=${{ env.VERSION }} --no-restore
     - name: Pack
-      run: dotnet pack --configuration Release -p:Version=${{ env.VERSION }} --no-build --verbosity normal
+      run: dotnet pack --configuration Release -p:Version=${{ env.VERSION }} --no-build --output ./artifacts --verbosity normal
     - name: Test
       run: dotnet test --configuration Release --no-build --verbosity normal
     - name: NuGet.Org push
       if: ${{ env.RUN_DEPLOY == true }}
       run: |
-        dotnet nuget push ./src/Kevsoft.PDFtk/bin/Release/*.nupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
+        dotnet nuget push ./artifacts/*.nupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
     - name: Upload Release Asset
       if: ${{ env.RUN_DEPLOY == true }}
       uses: softprops/action-gh-release@v1
@@ -50,6 +50,5 @@ jobs:
       with:
         tag_name: ${{ env.VERSION }}
         files: |
-          ./**/*.nuget
-          ./**/*.snupkg
+          ./artifacts/*.nuget
 
