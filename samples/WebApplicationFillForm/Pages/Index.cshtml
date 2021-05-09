@@ -1,0 +1,104 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "PDF Form Filler in .NET";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to an example PDF Form Filler in .NET Razor Pages.</h1>
+</div>
+
+<form method="post">
+
+    <div class="form-group">
+        <label asp-for="GivenName"></label>
+        <input class="form-control" asp-for="GivenName"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FamilyName"></label>
+        <input class="form-control" asp-for="FamilyName"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="HouseNumber"></label>
+        <input class="form-control" asp-for="HouseNumber"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address1"></label>
+        <input class="form-control" asp-for="Address1"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address2"></label>
+        <input class="form-control" asp-for="Address2"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Postcode"></label>
+        <input class="form-control" asp-for="Postcode"/>
+    </div>
+    <div class="form-group">
+        <label asp-for="City"></label>
+        <input class="form-control" asp-for="City"/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Country"></label>
+        <select class="form-control" asp-for="Country" asp-items="Model.CountriesSelectListItems">
+
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="Gender"></label>
+
+        @foreach (var gender in Model.Genders)
+        {
+            <div class="form-check">
+                <label for="Gender@(gender)">@gender</label>
+                <input id="Gender@(gender)" type="radio" asp-for="Gender" value="@gender"/>
+            </div>
+        }
+    </div>
+    <div class="form-group">
+        <label asp-for="Height"></label>
+        <input class="form-control-range" type="range" asp-for="Height"/>
+    </div>
+    <div class="form-group">
+        <div class="form-check">
+            <input class="form-check-input" asp-for="HasDrivingLicense"/>
+            <label class="form-check-label" asp-for="HasDrivingLicense"></label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>I speak and understand:</label>
+        <div class="form-check">
+            <input class="form-check-input" asp-for="Deutsch"/>
+            <label class="form-check-label" asp-for="Deutsch"></label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" asp-for="English"/>
+            <label class="form-check-label" asp-for="English"></label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" asp-for="Français"/>
+            <label class="form-check-label" asp-for="Français"></label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" asp-for="Esperanto"/>
+            <label class="form-check-label" asp-for="Esperanto"></label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" asp-for="Latin"/>
+            <label class="form-check-label" asp-for="Latin"></label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="FavouriteColour"></label>
+        <select class="form-control" asp-for="FavouriteColour" asp-items="Model.FavouriteColoursSelectListItems">
+
+        </select>
+    </div>
+    <input type="submit" value="Generate" class="btn btn-primary"/>
+</form>

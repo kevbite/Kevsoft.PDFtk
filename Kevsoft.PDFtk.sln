@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8919658B-9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kevsoft.PDFtk.Tests", "test\Kevsoft.PDFtk.Tests\Kevsoft.PDFtk.Tests.csproj", "{A91556CE-1CFF-4DC2-842A-443D8B21FAA1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{40C60605-180A-43F6-AA56-0927C3F52573}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationFillForm", "samples\WebApplicationFillForm\WebApplicationFillForm.csproj", "{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,9 +52,22 @@ Global
 		{A91556CE-1CFF-4DC2-842A-443D8B21FAA1}.Release|x64.Build.0 = Release|Any CPU
 		{A91556CE-1CFF-4DC2-842A-443D8B21FAA1}.Release|x86.ActiveCfg = Release|Any CPU
 		{A91556CE-1CFF-4DC2-842A-443D8B21FAA1}.Release|x86.Build.0 = Release|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Debug|x64.Build.0 = Debug|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Debug|x86.Build.0 = Debug|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Release|x64.ActiveCfg = Release|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Release|x64.Build.0 = Release|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Release|x86.ActiveCfg = Release|Any CPU
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8AB2ED67-E1CF-4C09-8988-E5BB5D1E1DC4} = {AE52884C-E855-4CE2-BBC8-0BD1E7280A9B}
 		{A91556CE-1CFF-4DC2-842A-443D8B21FAA1} = {8919658B-9B2F-4F1E-8B15-1FAEBD3111F4}
+		{1AECDF8B-7F5D-46D6-AA1E-649769015C1F} = {40C60605-180A-43F6-AA56-0927C3F52573}
 	EndGlobalSection
 EndGlobal
