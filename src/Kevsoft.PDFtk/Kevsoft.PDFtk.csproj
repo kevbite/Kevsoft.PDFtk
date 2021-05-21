@@ -7,8 +7,9 @@
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-
+  
   <PropertyGroup>
     <Title>Kevsoft.PDFtk</Title>
     <AssemblyName>Kevsoft.PDFtk</AssemblyName>
@@ -24,6 +25,10 @@
     <Copyright>Copyright © Kevsoft 2021</Copyright>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+  
   <PropertyGroup>
     <PackageTags>PDFtk;pdf</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

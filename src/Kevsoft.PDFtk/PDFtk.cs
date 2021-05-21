@@ -6,31 +6,38 @@ using System.Threading.Tasks;
 
 namespace Kevsoft.PDFtk
 {
+    /// <inheritdoc/>
     public sealed class PDFtk : IPDFtk
     {
         private readonly XfdfGenerator _xfdfGenerator;
         private readonly PDFtkProcess _pdftkProcess;
 
+        /// <summary>
+        /// Initializes a new instance of the PDFtk class.
+        /// </summary>
         public PDFtk()
         {
             _xfdfGenerator = new XfdfGenerator();
             _pdftkProcess = new PDFtkProcess();
         }
 
-        public async Task<IPDFtkResult<int?>> GetNumberOfPagesAsync(byte[] pdfFileBytes)
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<int?>> GetNumberOfPagesAsync(byte[] pdfFile)
         {
-            using var inputFile = await TempPDFtkFile.FromAsync(pdfFileBytes);
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
 
             return await GetNumberOfPagesAsync(inputFile.TempFileName);
         }
 
-        public async Task<IPDFtkResult<int?>> GetNumberOfPagesAsync(Stream pdfFileStream)
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<int?>> GetNumberOfPagesAsync(Stream pdfFile)
         {
-            using var inputFile = await TempPDFtkFile.FromAsync(pdfFileStream);
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
 
             return await GetNumberOfPagesAsync(inputFile.TempFileName);
         }
 
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<int?>> GetNumberOfPagesAsync(string filePath)
         {
             var executeProcessResult = await _pdftkProcess.ExecuteAsync(filePath, "dump_data");
@@ -50,21 +57,24 @@ namespace Kevsoft.PDFtk
             return new PDFtkResult<int?>(executeProcessResult, pages);
         }
 
-        public async Task<IPDFtkResult<byte[]>> GetPagesAsync(byte[] pdfFileBytes, params int[] pages)
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<byte[]>> GetPagesAsync(byte[] pdfFile, params int[] pages)
         {
-            using var inputFile = await TempPDFtkFile.FromAsync(pdfFileBytes);
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
             
             return await GetPagesAsync(inputFile.TempFileName, pages);
         }
         
         
-        public async Task<IPDFtkResult<byte[]>> GetPagesAsync(Stream pdfFileBytes, params int[] pages)
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<byte[]>> GetPagesAsync(Stream pdfFile, params int[] pages)
         {
-            using var inputFile = await TempPDFtkFile.FromAsync(pdfFileBytes);
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
             
             return await GetPagesAsync(inputFile.TempFileName, pages);
         }
 
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> GetPagesAsync(string inputFile, params int[] pages)
         {
             using var outputFile = TempPDFtkFile.Create();
@@ -78,6 +88,7 @@ namespace Kevsoft.PDFtk
             return await ResolveSingleFileExecutionResultAsync(executeProcessResult, outputFile);
         }
 
+        /// <inheritdoc/>
         private static IEnumerable<string> GetPageRangeArgs(int[] pages)
         {
             var runStart = -1;
@@ -109,13 +120,15 @@ namespace Kevsoft.PDFtk
             yield return RangeString();
         }
 
-        public async Task<IPDFtkResult<IDataField[]>> GetDataFieldsAsync(byte[] pdfFileBytes)
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<IDataField[]>> GetDataFieldsAsync(byte[] pdfFile)
         {
-            using var inputFile = await TempPDFtkFile.FromAsync(pdfFileBytes);
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
 
             return await GetDataFieldsAsync(inputFile.TempFileName);
         }
         
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<IDataField[]>> GetDataFieldsAsync(Stream pdfFile)
         {
             using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
@@ -123,6 +136,7 @@ namespace Kevsoft.PDFtk
             return await GetDataFieldsAsync(inputFile.TempFileName);
         }
 
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<IDataField[]>> GetDataFieldsAsync(string filePath)
         {
             var executeProcessResult = await _pdftkProcess.ExecuteAsync(filePath, "dump_data_fields");
@@ -140,6 +154,7 @@ namespace Kevsoft.PDFtk
             return new PDFtkResult<DataField[]>(executeProcessResult, dataFields);
         }
 
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> ConcatAsync(IEnumerable<byte[]> pdfFiles)
         {
             var inputFiles = await Task.WhenAll(
@@ -156,10 +171,11 @@ namespace Kevsoft.PDFtk
             }
         }
         
-        public async Task<IPDFtkResult<byte[]>> ConcatAsync(IEnumerable<Stream> pdfStreams)
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<byte[]>> ConcatAsync(IEnumerable<Stream> pdfFiles)
         {
             var inputFiles = await Task.WhenAll(
-                pdfStreams.Select(async file => await TempPDFtkFile.FromAsync(file))
+                pdfFiles.Select(async file => await TempPDFtkFile.FromAsync(file))
                     .ToList());
             
             try
@@ -172,6 +188,7 @@ namespace Kevsoft.PDFtk
             }
         }
 
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> ConcatAsync(IEnumerable<string> filePaths)
         {
             using var outputFile = TempPDFtkFile.Create();
@@ -184,6 +201,7 @@ namespace Kevsoft.PDFtk
             return await ResolveSingleFileExecutionResultAsync(executeProcessResult, outputFile);
         }
 
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<IEnumerable<byte[]>>> SplitAsync(byte[] pdfFile)
         {
             using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
@@ -191,13 +209,15 @@ namespace Kevsoft.PDFtk
             return await SplitAsync(inputFile.TempFileName);
         }
         
-        public async Task<IPDFtkResult<IEnumerable<byte[]>>> SplitAsync(Stream stream)
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<IEnumerable<byte[]>>> SplitAsync(Stream pdfFile)
         {
-            using var inputFile = await TempPDFtkFile.FromAsync(stream);
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
 
             return await SplitAsync(inputFile.TempFileName);
         }
 
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<IEnumerable<byte[]>>> SplitAsync(string filePath)
         {
             using var outputDirectory = TempPDFtkDirectory.Create();
@@ -220,6 +240,7 @@ namespace Kevsoft.PDFtk
             return new PDFtkResult<IEnumerable<byte[]>>(executeProcessResult, outputFileBytes);
         }
 
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> StampAsync(byte[] pdfFile, byte[] stampPdfFile)
         {
             using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
@@ -228,14 +249,16 @@ namespace Kevsoft.PDFtk
             return await StampAsync(inputFile.TempFileName, stampFile.TempFileName);
         }
         
-        public async Task<IPDFtkResult<byte[]>> StampAsync(Stream pdfFileStream, Stream stampPdfFileStream)
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<byte[]>> StampAsync(Stream pdfFile, Stream stampPdfFile)
         {
-            using var inputFile = await TempPDFtkFile.FromAsync(pdfFileStream);
-            using var stampFile = await TempPDFtkFile.FromAsync(stampPdfFileStream);
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
+            using var stampFile = await TempPDFtkFile.FromAsync(stampPdfFile);
 
             return await StampAsync(inputFile.TempFileName, stampFile.TempFileName);
         }
 
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> StampAsync(string pdfFilePath, string stampPdfFilePath)
         {
             using var outputFile = TempPDFtkFile.Create();
@@ -248,6 +271,7 @@ namespace Kevsoft.PDFtk
             return await ResolveSingleFileExecutionResultAsync(executeProcessResult, outputFile);
         }
 
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> FillFormAsync(byte[] pdfFile,
             IReadOnlyDictionary<string, string> fieldData,
             bool flatten,
@@ -261,12 +285,13 @@ namespace Kevsoft.PDFtk
                 dropXfa);
         }
         
-        public async Task<IPDFtkResult<byte[]>> FillFormAsync(Stream stream,
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<byte[]>> FillFormAsync(Stream pdfFile,
             IReadOnlyDictionary<string, string> fieldData,
             bool flatten,
             bool dropXfa)
         {
-            using var inputFile = await TempPDFtkFile.FromAsync(stream);
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
 
             return await FillFormAsync(inputFile.TempFileName,
                 fieldData,
@@ -274,6 +299,7 @@ namespace Kevsoft.PDFtk
                 dropXfa);
         }
 
+        /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> FillFormAsync(string pdfFilePath,
             IReadOnlyDictionary<string, string> fieldData,
             bool flatten,
