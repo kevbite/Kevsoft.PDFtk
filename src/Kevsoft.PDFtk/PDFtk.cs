@@ -16,9 +16,16 @@ namespace Kevsoft.PDFtk
         /// Initializes a new instance of the PDFtk class.
         /// </summary>
         public PDFtk()
+            : this(PDFtkOptions.Default())
+        {
+        }
+        
+        /// <inheritdoc cref="PDFtk()"/>
+        /// <param name="options">The options to use.</param>
+        public PDFtk(PDFtkOptions options)
         {
             _xfdfGenerator = new XfdfGenerator();
-            _pdftkProcess = new PDFtkProcess();
+            _pdftkProcess = new PDFtkProcess(options);
         }
 
         /// <inheritdoc/>
@@ -61,16 +68,16 @@ namespace Kevsoft.PDFtk
         public async Task<IPDFtkResult<byte[]>> GetPagesAsync(byte[] pdfFile, params int[] pages)
         {
             using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
-            
+
             return await GetPagesAsync(inputFile.TempFileName, pages);
         }
-        
-        
+
+
         /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> GetPagesAsync(Stream pdfFile, params int[] pages)
         {
             using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
-            
+
             return await GetPagesAsync(inputFile.TempFileName, pages);
         }
 
@@ -127,7 +134,7 @@ namespace Kevsoft.PDFtk
 
             return await GetDataFieldsAsync(inputFile.TempFileName);
         }
-        
+
         /// <inheritdoc/>
         public async Task<IPDFtkResult<IDataField[]>> GetDataFieldsAsync(Stream pdfFile)
         {
@@ -160,7 +167,7 @@ namespace Kevsoft.PDFtk
             var inputFiles = await Task.WhenAll(
                 pdfFiles.Select(async file => await TempPDFtkFile.FromAsync(file))
                     .ToList());
-            
+
             try
             {
                 return await ConcatAsync(inputFiles.Select(x => x.TempFileName));
@@ -170,14 +177,14 @@ namespace Kevsoft.PDFtk
                 inputFiles.Dispose();
             }
         }
-        
+
         /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> ConcatAsync(IEnumerable<Stream> pdfFiles)
         {
             var inputFiles = await Task.WhenAll(
                 pdfFiles.Select(async file => await TempPDFtkFile.FromAsync(file))
                     .ToList());
-            
+
             try
             {
                 return await ConcatAsync(inputFiles.Select(x => x.TempFileName));
@@ -208,7 +215,7 @@ namespace Kevsoft.PDFtk
 
             return await SplitAsync(inputFile.TempFileName);
         }
-        
+
         /// <inheritdoc/>
         public async Task<IPDFtkResult<IEnumerable<byte[]>>> SplitAsync(Stream pdfFile)
         {
@@ -248,7 +255,7 @@ namespace Kevsoft.PDFtk
 
             return await StampAsync(inputFile.TempFileName, stampFile.TempFileName);
         }
-        
+
         /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> StampAsync(Stream pdfFile, Stream stampPdfFile)
         {
@@ -284,7 +291,7 @@ namespace Kevsoft.PDFtk
                 flatten,
                 dropXfa);
         }
-        
+
         /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> FillFormAsync(Stream pdfFile,
             IReadOnlyDictionary<string, string> fieldData,

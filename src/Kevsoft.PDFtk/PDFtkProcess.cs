@@ -7,13 +7,18 @@ namespace Kevsoft.PDFtk
 {
     internal sealed class PDFtkProcess
     {
+        private readonly PDFtkOptions _options;
+
+        public PDFtkProcess(PDFtkOptions options)
+            => _options = options;
+
         internal async Task<ExecutionResult> ExecuteAsync(params string[] args)
         {
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "pdftk",
+                    FileName = _options.PDFtkPath,
                     Arguments = string.Join(" ", args),
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
