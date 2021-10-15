@@ -381,7 +381,7 @@ namespace Kevsoft.PDFtk
 
             using var outputFile = TempPDFtkFile.Create();
 
-            string[] bounds = (firstPage: page == 1, lastPage: page == totalPages) switch
+            var bounds = (firstPage: page == 1, lastPage: page == totalPages) switch
             {
                 (firstPage: true, lastPage: false) => new[] { "B", $"A{page + 1}-end" },
                 (firstPage: false, lastPage: true) => new[] { $"A1-{page - 1}", "B" },
