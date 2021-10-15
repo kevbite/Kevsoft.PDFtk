@@ -359,7 +359,7 @@ namespace Kevsoft.PDFtk
 
             return await ReplacePage(inputFile.TempFileName, page, stampFile.TempFileName);
         }
-        
+
         /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> ReplacePage(Stream pdfFile, int page, Stream replacementPdfFile)
         {
@@ -368,7 +368,7 @@ namespace Kevsoft.PDFtk
 
             return await ReplacePage(inputFile.TempFileName, page, stampFile.TempFileName);
         }
-        
+
         /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> ReplacePage(string pdfFilePath, int page, string replacementFilePath)
         {
@@ -378,22 +378,15 @@ namespace Kevsoft.PDFtk
             var totalPages = numberOfPagesAsync.Result;
             if (page <= 0 || page > totalPages)
                 throw new ArgumentException($"Invalid page to replace, min page is 1 and maximum is {totalPages}");
-            
+
             using var outputFile = TempPDFtkFile.Create();
-            
-            string[] bounds;
-            if (page == 1)
+
+            string[] bounds = (firstPage: page == 1, lastPage: page == totalPages) switch
             {
-                bounds = new[] { "B", $"A{page + 1}-end" };
-            }
-            else  if (page == totalPages)
-            {
-                bounds = new[] { $"A1-{page - 1}", "B" };
-            }
-            else
-            {
-                bounds = new[] { $"A1-{page - 1}", "B", $"A{page + 1}-end" };
-            }
+                (firstPage: true, lastPage: false) => new[] { "B", $"A{page + 1}-end" },
+                (firstPage: false, lastPage: true) => new[] { $"A1-{page - 1}", "B" },
+                _ => new[] { $"A1-{page - 1}", "B", $"A{page + 1}-end" },
+            };
 
             var args = new List<string>(8)
             {
