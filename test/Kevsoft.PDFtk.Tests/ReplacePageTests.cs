@@ -64,9 +64,9 @@ namespace Kevsoft.PDFtk.Tests
         public async Task ShouldReturnPdfWithReplacedPage_ForInvalidPdfFile()
         {
             var fileBytes = Guid.NewGuid().ToByteArray();
-            var stampBytes = await File.ReadAllBytesAsync(TestFiles.StampFilePath);
+            var replacementFileBytes = await File.ReadAllBytesAsync(TestFiles.StampFilePath);
 
-            var result = await _pdFtk.ReplacePage(fileBytes, 1, stampBytes);
+            var result = await _pdFtk.ReplacePage(fileBytes, 1, replacementFileBytes);
 
             result.Success.Should().BeFalse();
             result.Result.Should().BeEmpty();
@@ -76,12 +76,25 @@ namespace Kevsoft.PDFtk.Tests
         public async Task ShouldReturnPdfWithReplacedPage_ForReplacementPdfFile()
         {
             var fileBytes = await File.ReadAllBytesAsync(TestFiles.TestFile1Path);
-            var stampBytes = Guid.NewGuid().ToByteArray();
+            var replacementFileBytes = Guid.NewGuid().ToByteArray();
 
-            var result = await _pdFtk.ReplacePage(fileBytes, 1, stampBytes);
+            var result = await _pdFtk.ReplacePage(fileBytes, 1, replacementFileBytes);
 
             result.Success.Should().BeFalse();
             result.Result.Should().BeEmpty();
+        }
+        
+        [Theory]
+        [InlineData(0)]
+        [InlineData(11)]
+        public async Task ShouldThrowExceptionWhenPageIsOutOfBounds(int page)
+        {
+            var fileBytes = await File.ReadAllBytesAsync(TestFiles.TestFile1Path);
+            var replacementPdfBytes = await File.ReadAllBytesAsync(TestFiles.TestFileWith2PagesPath);
+
+            Func<Task> act = (async () => await _pdFtk.ReplacePage(fileBytes, page, replacementPdfBytes));
+
+            await act.Should().ThrowAsync<ArgumentException>();
         }
     }
 }

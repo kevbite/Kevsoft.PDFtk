@@ -372,27 +372,27 @@ namespace Kevsoft.PDFtk
         /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> ReplacePage(string pdfFilePath, int page, string replacementFilePath)
         {
+            var numberOfPagesAsync = await GetNumberOfPagesAsync(pdfFilePath);
+            if (!numberOfPagesAsync.Success)
+                return new PDFtkResult<byte[]>(numberOfPagesAsync.ExecutionResult, Array.Empty<byte>());
+            var totalPages = numberOfPagesAsync.Result;
+            if (page <= 0 || page > totalPages)
+                throw new ArgumentException($"Invalid page to replace, min page is 1 and maximum is {totalPages}");
+            
             using var outputFile = TempPDFtkFile.Create();
-
+            
             string[] bounds;
             if (page == 1)
             {
                 bounds = new[] { "B", $"A{page + 1}-end" };
             }
+            else  if (page == totalPages)
+            {
+                bounds = new[] { $"A1-{page - 1}", "B" };
+            }
             else
             {
-                var numberOfPagesResult = await GetNumberOfPagesAsync(pdfFilePath);
-                if (!numberOfPagesResult.Success)
-                    return new PDFtkResult<byte[]>(numberOfPagesResult.ExecutionResult, Array.Empty<byte>());
-
-                if (numberOfPagesResult.Result == page)
-                {
-                    bounds = new[] { $"A1-{page - 1}", "B" };
-                }
-                else
-                {
-                    bounds = new[] { $"A1-{page - 1}", "B", $"A{page + 1}-end" };
-                }
+                bounds = new[] { $"A1-{page - 1}", "B", $"A{page + 1}-end" };
             }
 
             var args = new List<string>(8)
