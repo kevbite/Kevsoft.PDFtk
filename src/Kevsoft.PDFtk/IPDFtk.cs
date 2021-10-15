@@ -183,5 +183,33 @@ namespace Kevsoft.PDFtk
             IReadOnlyDictionary<string, string> fieldData,
             bool flatten = true,
             bool dropXfa = false);
+
+
+        /// <summary>
+        /// Replaces a page in a PDF with another PDF
+        /// </summary>
+        /// <param name="fileBytes">A byte array of the PDF file input.</param>
+        /// <param name="page">The page to replace</param>
+        /// <param name="replacementFileBytes">A byte array of the PDF file to replace the page with.</param>
+        /// <returns>A result with the PDF form filled as a byte array.</returns>
+        Task<IPDFtkResult<byte[]>> ReplacePage(byte[] fileBytes, int page, byte[] replacementFileBytes);
+
+        /// <summary>
+        /// Replaces a page in a PDF with another PDF
+        /// </summary>
+        /// <param name="pdfFile">A stream of the PDF file input.</param>
+        /// <param name="page">The page to replace</param>
+        /// <param name="replacementPdfFile">A stream of the PDF file to replace the page with.</param>
+        /// <returns>A result with the PDF form filled as a byte array.</returns>
+        Task<IPDFtkResult<byte[]>> ReplacePage(Stream pdfFile, int page, Stream replacementPdfFile);
+
+        /// <summary>
+        /// Replaces a page in a PDF with another PDF
+        /// </summary>
+        /// <param name="pdfFilePath">A PDF file path input.</param>
+        /// <param name="page">The page to replace</param>
+        /// <param name="replacementFilePath">A PDF file path to replace the page with.</param>
+        /// <returns>A result with the PDF form filled as a byte array.</returns>
+        Task<IPDFtkResult<byte[]>> ReplacePage(string pdfFilePath, int page, string replacementFilePath);
     }
 }
