@@ -3,7 +3,7 @@
     internal sealed class PDFtkResult<TResult> : IPDFtkResult<TResult>
     {
         private readonly ExecutionResult _executionResult;
-
+        
         internal PDFtkResult(ExecutionResult executionResult, TResult result)
         {
             _executionResult = executionResult;
@@ -15,5 +15,7 @@
         public TResult Result { get; }
         public int ExitCode => _executionResult.ExitCode;
         public bool Success => ExitCode == 0;
+
+        ExecutionResult IPDFtkResult<TResult>.ExecutionResult => _executionResult;
     }
 }
