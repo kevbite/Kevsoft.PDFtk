@@ -19,7 +19,7 @@ namespace Kevsoft.PDFtk
             : this(PDFtkOptions.Default())
         {
         }
-        
+
         /// <inheritdoc cref="PDFtk()"/>
         /// <param name="options">The options to use.</param>
         public PDFtk(PDFtkOptions options)
@@ -349,6 +349,59 @@ namespace Kevsoft.PDFtk
             }
 
             return new PDFtkResult<byte[]>(executeProcessResult, bytes);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<byte[]>> ReplacePage(byte[] fileBytes, int page, byte[] replacementFileBytes)
+        {
+            using var inputFile = await TempPDFtkFile.FromAsync(fileBytes);
+            using var stampFile = await TempPDFtkFile.FromAsync(replacementFileBytes);
+
+            return await ReplacePage(inputFile.TempFileName, page, stampFile.TempFileName);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<byte[]>> ReplacePage(Stream pdfFile, int page, Stream replacementPdfFile)
+        {
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
+            using var stampFile = await TempPDFtkFile.FromAsync(replacementPdfFile);
+
+            return await ReplacePage(inputFile.TempFileName, page, stampFile.TempFileName);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<byte[]>> ReplacePage(string pdfFilePath, int page, string replacementFilePath)
+        {
+            var numberOfPagesAsync = await GetNumberOfPagesAsync(pdfFilePath);
+            if (!numberOfPagesAsync.Success)
+                return new PDFtkResult<byte[]>(numberOfPagesAsync.ExecutionResult, Array.Empty<byte>());
+            var totalPages = numberOfPagesAsync.Result;
+            if (page <= 0 || page > totalPages)
+                throw new ArgumentException($"Invalid page to replace, min page is 1 and maximum is {totalPages}");
+
+            using var outputFile = TempPDFtkFile.Create();
+
+            var bounds = (firstPage: page == 1, lastPage: page == totalPages) switch
+            {
+                (firstPage: true, lastPage: false) => new[] { "B", $"A{page + 1}-end" },
+                (firstPage: false, lastPage: true) => new[] { $"A1-{page - 1}", "B" },
+                _ => new[] { $"A1-{page - 1}", "B", $"A{page + 1}-end" },
+            };
+
+            var args = new List<string>(8)
+            {
+                $"A={pdfFilePath}",
+                $"B={replacementFilePath}",
+                "cat"
+            };
+            args.AddRange(bounds);
+            args.Add("output");
+            args.Add(outputFile.TempFileName);
+            var executeProcessResult = await _pdftkProcess.ExecuteAsync(
+                args.ToArray()
+            );
+
+            return await ResolveSingleFileExecutionResultAsync(executeProcessResult, outputFile);
         }
     }
 }

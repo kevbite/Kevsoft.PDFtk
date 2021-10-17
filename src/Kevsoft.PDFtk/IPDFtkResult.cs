@@ -26,5 +26,7 @@
         /// Success flag of the execution of PDFtk.
         /// </summary>
         bool Success { get; }
+        
+        internal ExecutionResult ExecutionResult { get; }
     }
 }
