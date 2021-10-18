@@ -83,7 +83,7 @@ namespace Kevsoft.PDFtk.Tests
             result.Success.Should().BeFalse();
             result.Result.Should().BeEmpty();
         }
-        
+
         [Theory]
         [InlineData(0)]
         [InlineData(11)]
@@ -95,6 +95,22 @@ namespace Kevsoft.PDFtk.Tests
             Func<Task> act = (async () => await _pdFtk.ReplacePage(fileBytes, page, replacementPdfBytes));
 
             await act.Should().ThrowAsync<ArgumentException>();
+        }
+
+        [Theory]
+        [InlineData(FirstPage, 3)]
+        [InlineData(8, LastPage)]
+        [InlineData(4, 6)]
+        [InlineData(4, 8)]
+        public async Task ShouldReturnPdfWithReplacedRangeOfPages(int start, int end)
+        {
+            const int totalPagesInserted = 2;
+            
+            var result = await _pdFtk.ReplaceRangeOfPages(TestFiles.TestFile1Path, start,end, TestFiles.TestFileWith2PagesPath);
+
+            result.Success.Should().BeTrue();
+            result.Result.Should().NotBeEmpty();
+            (await _pdFtk.GetNumberOfPagesAsync(result.Result)).Result.Should().Be(LastPage - (end - start + 1) + totalPagesInserted);
         }
     }
 }
