@@ -210,13 +210,13 @@ namespace Kevsoft.PDFtk
         /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> ReplacePage(string pdfFilePath, int page, string replacementFilePath)
         {
-            return await ReplaceRangeOfPages(pdfFilePath, page, page, replacementFilePath);
+            return await ReplacePages(pdfFilePath, page, page, replacementFilePath);
         }
 
         /// <inheritdoc/>
-        public async Task<IPDFtkResult<byte[]>> ReplaceRangeOfPages(string pdfFilePath, int start, int end, string replacementFilepath)
+        public async Task<IPDFtkResult<byte[]>> ReplacePages(string pdfFilePath, int startPage, int endPage, string replacementFilePath)
         {
-            var range = new Range(start, end);
+            var range = new Range(startPage, endPage);
             var numberOfPagesAsync = await GetNumberOfPagesAsync(pdfFilePath);
             if (!numberOfPagesAsync.Success)
                 return new PDFtkResult<byte[]>(numberOfPagesAsync.ExecutionResult, Array.Empty<byte>());
@@ -236,7 +236,7 @@ namespace Kevsoft.PDFtk
             var args = new List<string>(8)
             {
                 $"A={pdfFilePath}",
-                $"B={replacementFilepath}",
+                $"B={replacementFilePath}",
                 "cat"
             };
             args.AddRange(bounds);
