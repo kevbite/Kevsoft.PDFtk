@@ -138,5 +138,18 @@ namespace Kevsoft.PDFtk
 
             return await pdftk.ReplacePage(inputFile.TempFileName, page, stampFile.TempFileName);
         }
+
+        /// <summary>
+        /// Extracts attachments from a PDF file.
+        /// </summary>
+        /// <param name="pdftk">The IPDFtk object.</param>
+        /// <param name="pdfFile">A stream of the PDF file input.</param>
+        /// <returns>A result with the attachments.</returns>
+        public static async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> ExtractAttachments(this IPDFtk pdftk, Stream pdfFile)
+        {
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
+
+            return await pdftk.ExtractAttachments(inputFile.TempFileName);
+        }
     }
 }
