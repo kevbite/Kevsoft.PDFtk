@@ -134,9 +134,26 @@ namespace Kevsoft.PDFtk
         public static async Task<IPDFtkResult<byte[]>> ReplacePage(this IPDFtk pdftk, Stream pdfFile, int page, Stream replacementPdfFile)
         {
             using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
-            using var stampFile = await TempPDFtkFile.FromAsync(replacementPdfFile);
+            using var replacementFile = await TempPDFtkFile.FromAsync(replacementPdfFile);
 
-            return await pdftk.ReplacePage(inputFile.TempFileName, page, stampFile.TempFileName);
+            return await pdftk.ReplacePage(inputFile.TempFileName, page, replacementFile.TempFileName);
+        }
+        
+        /// <summary>
+        /// Replaces a range of pages in a PDF with another PDF
+        /// </summary>
+        /// <param name="pdftk">The IPDFtk object.</param>
+        /// <param name="pdfFile">A stream of the PDF file input.</param>
+        /// <param name="startPage">The page to replace</param>
+        /// <param name="endPage">The page to replace</param>
+        /// <param name="replacementPdfFile">A stream of the PDF file to replace the page with.</param>
+        /// <returns>A result with the PDF form filled as a byte array.</returns>
+        public static async Task<IPDFtkResult<byte[]>> ReplacePage(this IPDFtk pdftk, Stream pdfFile, int startPage, int endPage, Stream replacementPdfFile)
+        {
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
+            using var replacementFile = await TempPDFtkFile.FromAsync(replacementPdfFile);
+
+            return await pdftk.ReplacePages(inputFile.TempFileName, startPage, endPage, replacementFile.TempFileName);
         }
     }
 }
