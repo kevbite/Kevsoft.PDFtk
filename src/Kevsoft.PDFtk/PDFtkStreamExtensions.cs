@@ -78,8 +78,8 @@ namespace Kevsoft.PDFtk
         /// </summary>
         /// <param name="pdftk">The IPDFtk object.</param>
         /// <param name="pdfFile">A stream of the PDF file input.</param>
-        /// <returns>A result with an enumeration of byte arrays.</returns>
-        public static async Task<IPDFtkResult<IEnumerable<byte[]>>> SplitAsync(this IPDFtk pdftk, Stream pdfFile)
+        /// <returns>A result with an enumeration of key value pair where the key is the filename and the value is a byte arrays.</returns>
+        public static async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> SplitAsync(this IPDFtk pdftk, Stream pdfFile)
         {
             using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
 

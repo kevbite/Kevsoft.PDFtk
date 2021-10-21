@@ -126,7 +126,7 @@ namespace Kevsoft.PDFtk
         }
 
         /// <inheritdoc/>
-        public async Task<IPDFtkResult<IEnumerable<byte[]>>> SplitAsync(string filePath)
+        public async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> SplitAsync(string filePath)
         {
             using var outputDirectory = TempPDFtkDirectory.Create();
 
@@ -134,19 +134,9 @@ namespace Kevsoft.PDFtk
             var executeProcessResult =
                 await _pdftkProcess.ExecuteAsync(filePath, "burst", "output", outputFilePattern);
 
-            var outputFileBytes = new List<byte[]>();
-            if (executeProcessResult.Success)
-            {
-                var outputFiles = Directory.GetFiles(outputDirectory.TempDirectoryFullName, "*.pdf");
-                foreach (var outputFile in outputFiles)
-                {
-                    var bytes = await File.ReadAllBytesAsync(outputFile);
-                    outputFileBytes.Add(bytes);
-                }
-            }
-
-            return new PDFtkResult<IEnumerable<byte[]>>(executeProcessResult, outputFileBytes);
+            return await ResolveSingleDirectoryExecutionResultAsync(executeProcessResult, outputDirectory, "*.pdf");
         }
+
 
         /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> StampAsync(string pdfFilePath, string stampPdfFilePath)
@@ -206,6 +196,24 @@ namespace Kevsoft.PDFtk
             return new PDFtkResult<byte[]>(executeProcessResult, bytes);
         }
 
+        private static async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>>
+            ResolveSingleDirectoryExecutionResultAsync(ExecutionResult executeProcessResult,
+                TempPDFtkDirectory outputDirectory, string searchPattern)
+        {
+            var outputFileBytes = new List<KeyValuePair<string, byte[]>>();
+            if (executeProcessResult.Success)
+            {
+                var outputFiles = Directory.GetFiles(outputDirectory.TempDirectoryFullName, searchPattern);
+                foreach (var outputFile in outputFiles)
+                {
+                    var bytes = await File.ReadAllBytesAsync(outputFile);
+                    var fileName = Path.GetFileName(outputFile);
+                    outputFileBytes.Add(KeyValuePair.Create(fileName, bytes));
+                }
+            }
+
+            return new PDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>(executeProcessResult, outputFileBytes);
+        }
 
         /// <inheritdoc/>
         public async Task<IPDFtkResult<byte[]>> ReplacePage(string pdfFilePath, int page, string replacementFilePath)
@@ -240,6 +248,21 @@ namespace Kevsoft.PDFtk
             );
 
             return await ResolveSingleFileExecutionResultAsync(executeProcessResult, outputFile);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> ExtractAttachments(string pdfFilePath)
+        {
+            using var outputDirectory = TempPDFtkDirectory.Create();
+
+            var executeProcessResult = await _pdftkProcess.ExecuteAsync(
+                pdfFilePath,
+                "unpack_files",
+                "output",
+                outputDirectory.TempDirectoryFullName
+            );
+
+            return await ResolveSingleDirectoryExecutionResultAsync(executeProcessResult, outputDirectory, "*");
         }
     }
 }
