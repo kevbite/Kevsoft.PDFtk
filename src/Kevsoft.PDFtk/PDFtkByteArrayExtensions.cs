@@ -137,9 +137,27 @@ namespace Kevsoft.PDFtk
         public static async Task<IPDFtkResult<byte[]>> ReplacePage(this IPDFtk pdftk, byte[] fileBytes, int page, byte[] replacementFileBytes)
         {
             using var inputFile = await TempPDFtkFile.FromAsync(fileBytes);
-            using var stampFile = await TempPDFtkFile.FromAsync(replacementFileBytes);
+            using var replacementFile = await TempPDFtkFile.FromAsync(replacementFileBytes);
 
-            return await pdftk.ReplacePage(inputFile.TempFileName, page, stampFile.TempFileName);
+            return await pdftk.ReplacePage(inputFile.TempFileName, page, replacementFile.TempFileName);
+        }
+
+        /// <summary>
+        /// Replaces a page in a PDF with another PDF
+        /// </summary>
+        /// <param name="pdftk">The IPDFtk object.</param>
+        /// <param name="fileBytes">A byte array of the PDF file input.</param>
+        /// <param name="startPage">The page to replace</param>
+        /// <param name="endPage">The page to replace</param>
+        /// <param name="replacementFileBytes">A byte array of the PDF file to replace the page with.</param>
+        /// <returns>A result with the PDF form filled as a byte array.</returns>
+        public static async Task<IPDFtkResult<byte[]>> ReplacePages(this IPDFtk pdftk, byte[] fileBytes, int startPage, int endPage,
+            byte[] replacementFileBytes)
+        {
+            using var inputFile = await TempPDFtkFile.FromAsync(fileBytes);
+            using var replacementFile = await TempPDFtkFile.FromAsync(replacementFileBytes);
+
+            return await pdftk.ReplacePages(inputFile.TempFileName, startPage,  endPage, replacementFile.TempFileName);
         }
 
         /// <summary>
@@ -154,6 +172,5 @@ namespace Kevsoft.PDFtk
 
             return await pdftk.ExtractAttachments(inputFile.TempFileName);
         }
-        
     }
 }

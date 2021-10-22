@@ -83,7 +83,7 @@ namespace Kevsoft.PDFtk.Tests
             result.Success.Should().BeFalse();
             result.Result.Should().BeEmpty();
         }
-        
+
         [Theory]
         [InlineData(0)]
         [InlineData(11)]

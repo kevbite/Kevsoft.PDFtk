@@ -76,6 +76,17 @@ namespace Kevsoft.PDFtk
         /// <param name="replacementFilePath">A PDF file path to replace the page with.</param>
         /// <returns>A result with the PDF form filled as a byte array.</returns>
         Task<IPDFtkResult<byte[]>> ReplacePage(string pdfFilePath, int page, string replacementFilePath);
+        
+        /// <summary>
+        /// Replaces a range of pages in a PDF with another PDF
+        /// </summary>
+        /// <param name="pdfFilePath">A PDF file path input.</param>
+        /// <param name="startPage">The page to replace</param>
+        /// <param name="endPage">The page to replace</param>
+        /// <param name="replacementFilePath">A PDF file path to replace the page with.</param>
+        /// <returns>A result with the PDF form filled as a byte array.</returns>
+        Task<IPDFtkResult<byte[]>> ReplacePages(string pdfFilePath, int startPage, int endPage, string replacementFilePath);
+
 
         /// <summary>
         /// Extracts attachments from a PDF file.
