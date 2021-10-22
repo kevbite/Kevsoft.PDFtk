@@ -7,5 +7,6 @@
         public static readonly string FormFilePath = "TestFiles/Form.pdf";
         public static readonly string TestFileWith2PagesPath = "TestFiles/TestFileWith2Pages.pdf";
         public static readonly string TestFileWith3PagesPath = "TestFiles/TestFileWith3Pages.pdf";
+        public static readonly string TestFileWithAttachmentsPath = "TestFiles/TestFileWithAttachments.pdf";
     }
 }

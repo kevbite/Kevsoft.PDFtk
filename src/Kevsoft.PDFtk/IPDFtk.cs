@@ -39,13 +39,13 @@ namespace Kevsoft.PDFtk
         /// <param name="filePaths">An enumeration of the PDF file paths to merge.</param>
         /// <returns>A result with the PDF as a byte array of the merged PDFs.</returns>
         Task<IPDFtkResult<byte[]>> ConcatAsync(IEnumerable<string> filePaths);
-        
+
         /// <summary>
         /// Splits a single PDF in many pages and return an enumeration of bytes representing each page a s single PDF.
         /// </summary>
         /// <param name="filePath">The PDF file path.</param>
-        /// <returns>A result with an enumeration of byte arrays.</returns>
-        Task<IPDFtkResult<IEnumerable<byte[]>>> SplitAsync(string filePath);
+        /// <returns>A result with an enumeration of key value pair where the key is the filename and the value is a byte arrays.</returns>
+        Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> SplitAsync(string filePath);
         
         /// <summary>
         /// Applies a stamp to a PDF file.
@@ -87,5 +87,12 @@ namespace Kevsoft.PDFtk
         /// <returns>A result with the PDF form filled as a byte array.</returns>
         Task<IPDFtkResult<byte[]>> ReplacePages(string pdfFilePath, int startPage, int endPage, string replacementFilePath);
 
+
+        /// <summary>
+        /// Extracts attachments from a PDF file.
+        /// </summary>
+        /// <param name="pdfFilePath">A PDF file path input.</param>
+        /// <returns>A result with the attachments.</returns>
+        Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> ExtractAttachments(string pdfFilePath);
     }
 }
