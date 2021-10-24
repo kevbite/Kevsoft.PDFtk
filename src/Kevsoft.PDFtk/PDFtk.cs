@@ -126,7 +126,7 @@ namespace Kevsoft.PDFtk
         }
 
         /// <inheritdoc/>
-        public async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> SplitAsync(string filePath)
+        public async Task<IPDFtkResult<IReadOnlyCollection<KeyValuePair<string, byte[]>>>> SplitAsync(string filePath)
         {
             using var outputDirectory = TempPDFtkDirectory.Create();
 
@@ -196,7 +196,7 @@ namespace Kevsoft.PDFtk
             return new PDFtkResult<byte[]>(executeProcessResult, bytes);
         }
 
-        private static async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>>
+        private static async Task<IPDFtkResult<IReadOnlyCollection<KeyValuePair<string, byte[]>>>>
             ResolveSingleDirectoryExecutionResultAsync(ExecutionResult executeProcessResult,
                 TempPDFtkDirectory outputDirectory, string searchPattern)
         {
@@ -212,7 +212,7 @@ namespace Kevsoft.PDFtk
                 }
             }
 
-            return new PDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>(executeProcessResult, outputFileBytes);
+            return new PDFtkResult<IReadOnlyCollection<KeyValuePair<string, byte[]>>>(executeProcessResult, outputFileBytes.AsReadOnly());
         }
 
         /// <inheritdoc/>
@@ -258,7 +258,7 @@ namespace Kevsoft.PDFtk
         }
 
         /// <inheritdoc/>
-        public async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> ExtractAttachments(
+        public async Task<IPDFtkResult<IReadOnlyCollection<KeyValuePair<string, byte[]>>>> ExtractAttachments(
             string pdfFilePath)
         {
             using var outputDirectory = TempPDFtkDirectory.Create();
@@ -271,6 +271,31 @@ namespace Kevsoft.PDFtk
             );
 
             return await ResolveSingleDirectoryExecutionResultAsync(executeProcessResult, outputDirectory, "*");
+        }
+        
+        
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<byte[]>> AttachFiles(string pdfFilePath, IEnumerable<string> files, int? page = null)
+        {
+            using var outputFile = TempPDFtkFile.Create();
+            var args = new List<string>(7)
+            {
+                pdfFilePath,
+                "attach_files"
+            };
+            args.AddRange(files);
+
+            if (page is { } p)
+            {
+                args.Add("to_page");
+                args.Add(p.ToString());
+            }
+            
+            args.Add("output");
+            args.Add(outputFile.TempFileName);
+            var executeProcessResult = await _pdftkProcess.ExecuteAsync(args.ToArray());
+
+            return await ResolveSingleFileExecutionResultAsync(executeProcessResult, outputFile);
         }
 
         private class Range

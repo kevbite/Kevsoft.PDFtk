@@ -45,7 +45,7 @@ namespace Kevsoft.PDFtk
         /// </summary>
         /// <param name="filePath">The PDF file path.</param>
         /// <returns>A result with an enumeration of key value pair where the key is the filename and the value is a byte arrays.</returns>
-        Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> SplitAsync(string filePath);
+        Task<IPDFtkResult<IReadOnlyCollection<KeyValuePair<string, byte[]>>>> SplitAsync(string filePath);
         
         /// <summary>
         /// Applies a stamp to a PDF file.
@@ -93,6 +93,15 @@ namespace Kevsoft.PDFtk
         /// </summary>
         /// <param name="pdfFilePath">A PDF file path input.</param>
         /// <returns>A result with the attachments.</returns>
-        Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> ExtractAttachments(string pdfFilePath);
+        Task<IPDFtkResult<IReadOnlyCollection<KeyValuePair<string, byte[]>>>> ExtractAttachments(string pdfFilePath);
+
+        /// <summary>
+        /// Attaches files to a PDF file.
+        /// </summary>
+        /// <param name="pdfFilePath">A PDF file path input.</param>
+        /// <param name="files">Files to attach to the PDF.</param>
+        /// <param name="page">The page to attach the given files, if null then files are attached to the document level.</param>
+        /// <returns>A result with the files attached to the PDF.</returns>
+        Task<IPDFtkResult<byte[]>> AttachFiles(string pdfFilePath, IEnumerable<string> files, int? page = null);
     }
 }
