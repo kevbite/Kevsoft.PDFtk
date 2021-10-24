@@ -160,9 +160,9 @@ var result = await pdftk.SplitAsync(pdfBytes);
 
 if(result.Success)
 {
-   foreach (var pdfPage in result.Result)
+   foreach (var (fileName, bytes) in result.Result)
    {
-       // Do something with each pdfPage (byte[]).
+       // Do something with each pdfPage.
    }
 }
 ```
@@ -203,9 +203,83 @@ if(result.Success)
 
 ### Replace a Page
 
-Replace a page in a PDF.
+Replace a page in a PDF with another PDF.
 
-*Not Implemented yet.*
+```csharp
+var pdftk = new PDFtk();
+
+var result = await pdftk.ReplacePage(
+    await File.ReadAllBytesAsync("MyDocument.pdf"),
+    page: 3,
+    await File.ReadAllBytesAsync("replacement.pdf")
+);
+
+if(result.Success)
+{
+   // Do something with result.Result (bytes[])
+}
+```
+### Replace Pages
+
+Replace multiple pages within a PDF with another PDF.
+
+```csharp
+var pdftk = new PDFtk();
+
+var result = await pdftk.ReplacePage(
+    await File.ReadAllBytesAsync("MyDocument.pdf"),
+    startPage: 3,
+    endPage: 5,
+    await File.ReadAllBytesAsync("replacement.pdf")
+);
+
+if(result.Success)
+{
+   // Do something with result.Result (bytes[])
+}
+```
+
+### Attach files
+
+Attaches files to a PDF, if `page` argument is supplied then files are attached to a given page, if `page` argument is not specified then files are attached at document level.
+
+```csharp
+var pdftk = new PDFtk();
+
+var result = await _pdFtk.AttachFiles(
+   await File.ReadAllBytesAsync("MyDocument.pdf"),
+   new Dictionary<string, byte[]>
+   {
+         ["test-file1.txt"] = Encoding.ASCII.GetBytes("Hello"),
+         ["test-file2.txt"] = Encoding.ASCII.GetBytes("World")
+   },
+   page: 10 // Optional page to attach files
+   );
+
+if(result.Success)
+{
+   // Do something with result.Result (bytes[])
+}
+```
+
+### Extract Attachments
+
+Extracts attachments from a PDF file.
+
+```csharp
+var pdftk = new PDFtk();
+
+var result = await _pdFtk.ExtractAttachments(
+   await File.ReadAllBytesAsync("MyDocument.pdf"));
+
+if(result.Success)
+{
+   foreach (var (fileName, bytes) in result.Result)
+   {
+       // Do something with each attachment.
+   }
+}
+```
 
 ### Compression/Decompression
 
