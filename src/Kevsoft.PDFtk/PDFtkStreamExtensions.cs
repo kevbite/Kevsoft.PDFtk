@@ -79,7 +79,7 @@ namespace Kevsoft.PDFtk
         /// <param name="pdftk">The IPDFtk object.</param>
         /// <param name="pdfFile">A stream of the PDF file input.</param>
         /// <returns>A result with an enumeration of key value pair where the key is the filename and the value is a byte arrays.</returns>
-        public static async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> SplitAsync(this IPDFtk pdftk, Stream pdfFile)
+        public static async Task<IPDFtkResult<IReadOnlyCollection<KeyValuePair<string, byte[]>>>> SplitAsync(this IPDFtk pdftk, Stream pdfFile)
         {
             using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
 
@@ -162,11 +162,27 @@ namespace Kevsoft.PDFtk
         /// <param name="pdftk">The IPDFtk object.</param>
         /// <param name="pdfFile">A stream of the PDF file input.</param>
         /// <returns>A result with the attachments.</returns>
-        public static async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> ExtractAttachments(this IPDFtk pdftk, Stream pdfFile)
+        public static async Task<IPDFtkResult<IReadOnlyCollection<KeyValuePair<string, byte[]>>>> ExtractAttachments(this IPDFtk pdftk, Stream pdfFile)
         {
             using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
 
             return await pdftk.ExtractAttachments(inputFile.TempFileName);
+        }
+        
+        /// <summary>
+        /// Attaches files to a PDF file.
+        /// </summary>
+        /// <param name="pdftk">The IPDFtk object.</param>
+        /// <param name="pdfFile">A stream of the PDF file input.</param>
+        /// <param name="attachments">Streams of files to attach to the PDF.</param>
+        /// <param name="page">The page to attach the given files, if null then files are attached to the document level.</param>
+        /// <returns>A result with the files attached to the PDF.</returns>
+        public static async Task<IPDFtkResult<byte[]>> AttachFiles(this IPDFtk pdftk,Stream pdfFile, IEnumerable<KeyValuePair<string, Stream>> attachments, int? page = null)
+        {
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
+            using var attachmentFiles = await TempPDFtkFiles.FromAsync(attachments);
+
+            return await pdftk.AttachFiles(inputFile.TempFileName, attachmentFiles.FileNames, page);
         }
     }
 }
