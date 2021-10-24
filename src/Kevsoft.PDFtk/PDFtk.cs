@@ -222,7 +222,8 @@ namespace Kevsoft.PDFtk
         }
 
         /// <inheritdoc/>
-        public async Task<IPDFtkResult<byte[]>> ReplacePages(string pdfFilePath, int startPage, int endPage, string replacementFilePath)
+        public async Task<IPDFtkResult<byte[]>> ReplacePages(string pdfFilePath, int startPage, int endPage,
+            string replacementFilePath)
         {
             var range = new Range(startPage, endPage);
             var numberOfPagesAsync = await GetNumberOfPagesAsync(pdfFilePath);
@@ -231,7 +232,8 @@ namespace Kevsoft.PDFtk
 
             var totalPages = numberOfPagesAsync.Result;
             if (!range.IsValid || !range.IsInBounds(totalPages))
-                throw new ArgumentException($"Invalid range of pages to replace, min page is 1 and maximum is {totalPages}");
+                throw new ArgumentException(
+                    $"Invalid range of pages to replace, min page is 1 and maximum is {totalPages}");
 
             var bounds = (firstPage: range.HasFirst(), lastPage: range.HasLast(totalPages)) switch
             {
@@ -255,7 +257,9 @@ namespace Kevsoft.PDFtk
             return await ResolveSingleFileExecutionResultAsync(executeProcessResult, outputFile);
         }
 
-        public async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> ExtractAttachments(string pdfFilePath)
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<IEnumerable<KeyValuePair<string, byte[]>>>> ExtractAttachments(
+            string pdfFilePath)
         {
             using var outputDirectory = TempPDFtkDirectory.Create();
 
@@ -268,7 +272,7 @@ namespace Kevsoft.PDFtk
 
             return await ResolveSingleDirectoryExecutionResultAsync(executeProcessResult, outputDirectory, "*");
         }
-        
+
         private class Range
         {
             public int Start { get; }
@@ -280,5 +284,6 @@ namespace Kevsoft.PDFtk
             public bool HasFirst() => HasFirst(1);
             public bool HasFirst(int? first) => Start == first;
             public bool HasLast(int? last) => End == last;
+        }
     }
 }
