@@ -21,10 +21,10 @@ namespace Kevsoft.PDFtk
             var dataField = new DataField();
             foreach (var arg in args)
             {
-                var split = arg.Split(":", 2);
+                var split = arg.Split(new []{':'}, 2);
                 var key = split[0];
 
-                var value = split.Length == 1 ? null : split[1][1..];
+                var value = split.Length == 1 ? null : split[1].Substring(1);
 
                 FieldSetMap[key](dataField, value);
             }

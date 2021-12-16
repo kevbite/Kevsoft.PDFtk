@@ -39,7 +39,7 @@ namespace Kevsoft.PDFtk
             {
                 var key = "NumberOfPages: ";
                 var line = executeProcessResult.StandardOutput
-                    .Split(Environment.NewLine)
+                    .Split(new[] { Environment.NewLine }, StringSplitOptions.None)
                     .Single(x => x.StartsWith(key));
 
                 pages = int.Parse(line.Substring(key.Length));
@@ -103,8 +103,8 @@ namespace Kevsoft.PDFtk
             if (executeProcessResult.Success)
             {
                 dataFields = executeProcessResult.StandardOutput
-                    .Split("---" + Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(x => x.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
+                    .Split(new[] { "---" + Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(x => x.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                     .Select(DataField.Parse)
                     .ToArray();
             }
@@ -190,7 +190,13 @@ namespace Kevsoft.PDFtk
             var bytes = Array.Empty<byte>();
             if (executeProcessResult.Success)
             {
+#if NETSTANDARD2_0
+                bytes = File.ReadAllBytes(outputFile.TempFileName);
+                await Task.CompletedTask;
+
+#else
                 bytes = await File.ReadAllBytesAsync(outputFile.TempFileName);
+#endif
             }
 
             return new PDFtkResult<byte[]>(executeProcessResult, bytes);
@@ -206,13 +212,19 @@ namespace Kevsoft.PDFtk
                 var outputFiles = Directory.GetFiles(outputDirectory.TempDirectoryFullName, searchPattern);
                 foreach (var outputFile in outputFiles)
                 {
+#if NETSTANDARD2_0
+                    var bytes = File.ReadAllBytes(outputFile);
+                    await Task.CompletedTask;
+#else
                     var bytes = await File.ReadAllBytesAsync(outputFile);
+#endif
                     var fileName = Path.GetFileName(outputFile);
-                    outputFileBytes.Add(KeyValuePair.Create(fileName, bytes));
+                    outputFileBytes.Add(new KeyValuePair<string, byte[]>(fileName, bytes));
                 }
             }
 
-            return new PDFtkResult<IReadOnlyCollection<KeyValuePair<string, byte[]>>>(executeProcessResult, outputFileBytes.AsReadOnly());
+            return new PDFtkResult<IReadOnlyCollection<KeyValuePair<string, byte[]>>>(executeProcessResult,
+                outputFileBytes.AsReadOnly());
         }
 
         /// <inheritdoc/>
@@ -272,10 +284,11 @@ namespace Kevsoft.PDFtk
 
             return await ResolveSingleDirectoryExecutionResultAsync(executeProcessResult, outputDirectory, "*");
         }
-        
-        
+
+
         /// <inheritdoc/>
-        public async Task<IPDFtkResult<byte[]>> AttachFiles(string pdfFilePath, IEnumerable<string> files, int? page = null)
+        public async Task<IPDFtkResult<byte[]>> AttachFiles(string pdfFilePath, IEnumerable<string> files,
+            int? page = null)
         {
             using var outputFile = TempPDFtkFile.Create();
             var args = new List<string>(7)
@@ -290,7 +303,7 @@ namespace Kevsoft.PDFtk
                 args.Add("to_page");
                 args.Add(p.ToString());
             }
-            
+
             args.Add("output");
             args.Add(outputFile.TempFileName);
             var executeProcessResult = await _pdftkProcess.ExecuteAsync(args.ToArray());

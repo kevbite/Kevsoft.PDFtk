@@ -24,10 +24,19 @@ namespace Kevsoft.PDFtk
         public static async Task<TempPDFtkFiles> FromAsync(IEnumerable<KeyValuePair<string, byte[]>> attachments)
         {
             var tempPdFtkFiles = new TempPDFtkFiles();
-            foreach (var (fileName, content) in attachments)
+            foreach (var kvp in attachments)
             {
-                await File.WriteAllBytesAsync(Path.Combine(tempPdFtkFiles._directory.TempDirectoryFullName, fileName),
+                var fileName = kvp.Key;
+                var content = kvp.Value;
+
+#if NETSTANDARD2_0
+                File.WriteAllBytes(Path.Combine(tempPdFtkFiles._directory.TempDirectoryFullName, fileName),
                     content);
+                await Task.CompletedTask;
+#else
+                   await File.WriteAllBytesAsync(Path.Combine(tempPdFtkFiles._directory.TempDirectoryFullName, fileName),
+                    content);
+#endif
             }
 
             return tempPdFtkFiles;
@@ -36,10 +45,19 @@ namespace Kevsoft.PDFtk
         public static async Task<TempPDFtkFiles> FromAsync(IEnumerable<KeyValuePair<string, Stream>> attachments)
         {
             var tempPdFtkFiles = new TempPDFtkFiles();
-            foreach (var (fileName, stream) in attachments)
+            foreach (var kvp in attachments)
             {
-                await using var openWrite =
+                var fileName = kvp.Key;
+                var stream = kvp.Value;
+
+#if NETSTANDARD2_0
+                using var openWrite =
                     File.OpenWrite(Path.Combine(tempPdFtkFiles._directory.TempDirectoryFullName, fileName));
+
+#else
+                    await using var openWrite =
+                    File.OpenWrite(Path.Combine(tempPdFtkFiles._directory.TempDirectoryFullName, fileName));
+#endif
 
                 await stream.CopyToAsync(openWrite);
             }

@@ -15,7 +15,7 @@ namespace Kevsoft.PDFtk
                 Async = true
             };
 
-#if NETSTANDARD2_1
+#if NETSTANDARD2_1 || NETSTANDARD2_0
             using var xmlWriter =
                 XmlWriter.Create(inputFile.TempFileName, xmlWriterSettings);
 #else
@@ -48,9 +48,9 @@ namespace Kevsoft.PDFtk
         {
             await xmlWriter.WriteStartElementAsync(null, "fields", null);
 
-            foreach (var (key, value) in fieldData)
+            foreach (var kvp in fieldData)
             {
-                await WriteField(xmlWriter, key, value);
+                await WriteField(xmlWriter, kvp.Key, kvp.Value);
             }
 
             await xmlWriter.WriteEndElementAsync();

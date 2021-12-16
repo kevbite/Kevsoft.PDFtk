@@ -18,12 +18,17 @@ namespace Kevsoft.PDFtk
             var tempPdFtkFile = new TempPDFtkFile();
             if (pdfFileBytes is not null)
             {
+#if NETSTANDARD2_0
+                File.WriteAllBytes(tempPdFtkFile.TempFileName, pdfFileBytes);
+                await Task.CompletedTask;
+#else
                 await File.WriteAllBytesAsync(tempPdFtkFile.TempFileName, pdfFileBytes);
+#endif
             }
 
             return tempPdFtkFile;
         }
-        
+
         public static TempPDFtkFile Create()
         {
             return new();
@@ -33,8 +38,11 @@ namespace Kevsoft.PDFtk
         {
             var tempPdFtkFile = new TempPDFtkFile();
 
+#if NETSTANDARD2_0
+            using var openWrite = File.OpenWrite(tempPdFtkFile.TempFileName);
+#else
             await using var openWrite = File.OpenWrite(tempPdFtkFile.TempFileName);
-
+#endif
             await stream.CopyToAsync(openWrite);
 
             return tempPdFtkFile;
