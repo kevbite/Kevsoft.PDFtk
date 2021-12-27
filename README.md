@@ -295,7 +295,7 @@ The [samples](samples/) folder containers examples of how you could use the Kevs
 
 ### WebApplicationFillForm
 
-This is a small [razor pages website](https://docs.microsoft.com/en-us/aspnet/core/razor-pages/?view=aspnetcore-5.0&tabs=visual-studio) that has a form where you can fill in a PDF and generate an output for the browser to download.
+This is a small [razor pages website](samples/WebApplicationFillForm) that has a form where you can fill in a PDF and generate an output for the browser to download.
 
 ## Contributing
 
