@@ -55,9 +55,16 @@ namespace Kevsoft.PDFtk
 
             var pageRanges = GetPageRangeArgs(pages);
 
-            var executeProcessResult = await _pdftkProcess.ExecuteAsync(inputFile, "cat",
-                string.Join(" ", pageRanges),
-                "output", outputFile.TempFileName);
+            var args = new List<string>(4 + pages.Length);
+            args.Add(inputFile);
+            args.Add("cat");
+
+            args.AddRange(pageRanges);
+            
+            args.Add("output");
+            args.Add(outputFile.TempFileName);
+
+            var executeProcessResult = await _pdftkProcess.ExecuteAsync(args.ToArray());
 
             return await ResolveSingleFileExecutionResultAsync(executeProcessResult, outputFile);
         }
@@ -117,10 +124,9 @@ namespace Kevsoft.PDFtk
         {
             using var outputFile = TempPDFtkFile.Create();
 
-            var inputFileNames = string.Join(" ", filePaths);
-
             var executeProcessResult =
-                await _pdftkProcess.ExecuteAsync(inputFileNames, "cat", "output", outputFile.TempFileName);
+                await _pdftkProcess.ExecuteAsync(filePaths.Concat(new[] { "cat", "output", outputFile.TempFileName })
+                    .ToArray());
 
             return await ResolveSingleFileExecutionResultAsync(executeProcessResult, outputFile);
         }
@@ -142,8 +148,7 @@ namespace Kevsoft.PDFtk
         public async Task<IPDFtkResult<byte[]>> StampAsync(string pdfFilePath, string stampPdfFilePath)
         {
             using var outputFile = TempPDFtkFile.Create();
-
-
+            
             var executeProcessResult = await _pdftkProcess.ExecuteAsync(pdfFilePath,
                 "multistamp", stampPdfFilePath,
                 "output", outputFile.TempFileName);
