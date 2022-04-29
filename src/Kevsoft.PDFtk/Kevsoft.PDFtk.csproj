@@ -23,6 +23,7 @@
         Merging, splitting, rotating, decrypting, encrypting, filling, stamping.
     </Description>
     <Copyright>Copyright © Kevsoft 2021</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -39,4 +40,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 </Project>
