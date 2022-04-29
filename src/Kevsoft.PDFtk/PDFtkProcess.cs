@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,12 +15,13 @@ namespace Kevsoft.PDFtk
 
         internal async Task<ExecutionResult> ExecuteAsync(params string[] args)
         {
+            var arguments = BuildArguments(args);
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = _options.PDFtkPath,
-                    Arguments = string.Join(" ", args),
+                    Arguments = arguments,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -39,6 +41,15 @@ namespace Kevsoft.PDFtk
 #endif
             
             return new ExecutionResult(process.ExitCode, standardOutput, standardError);
+        }
+
+        private static string BuildArguments(string[] args)
+        {
+            return string.Join(" ", args.Select(x => x switch
+            {
+                { } value when value.Contains(" ") => $"\"{x}\"",
+                _ => x
+            }));
         }
 
         private static async Task<string> GetAllStreamAsync(StreamReader stream)
