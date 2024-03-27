@@ -27,7 +27,7 @@ namespace Kevsoft.PDFtk.Tests
 
             result.Success.Should().BeTrue();
             var dumpDataFields = await _pdFtk.GetDataFieldsAsync(result.Result);
-            dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName))
+            dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName ?? string.Empty))
                 .ToDictionary(x => x.FieldName!, field => field.FieldValue)
                 .Should()
                 .BeEquivalentTo(FieldData);
@@ -42,7 +42,7 @@ namespace Kevsoft.PDFtk.Tests
 
             result.Success.Should().BeTrue();
             var dumpDataFields = await _pdFtk.GetDataFieldsAsync(result.Result);
-            dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName))
+            dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName ?? string.Empty))
                 .ToDictionary(x => x.FieldName!, field => field.FieldValue)
                 .Should()
                 .BeEquivalentTo(FieldData);
@@ -55,7 +55,7 @@ namespace Kevsoft.PDFtk.Tests
 
             result.Success.Should().BeTrue();
             var dumpDataFields = await _pdFtk.GetDataFieldsAsync(result.Result);
-            dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName))
+            dumpDataFields.Result.Where(x => FieldData.Keys.Contains(x.FieldName ?? string.Empty))
                 .ToDictionary(x => x.FieldName!, field => field.FieldValue)
                 .Should()
                 .BeEquivalentTo(FieldData);

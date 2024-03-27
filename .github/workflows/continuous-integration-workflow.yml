@@ -17,19 +17,19 @@ jobs:
       run: sudo apt-get install pdftk
     - name: Install PDFtk Server CLI
       if: ${{ matrix.os == 'windows-latest' }}
-      run: | 
+      run: |
+        Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
         choco install pdftk-server
-        refreshenv
         echo "C:\Program Files (x86)\PDFtk Server\bin\" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core 3.1
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.x
+    - uses: actions/checkout@v4
     - name: Setup .NET 6
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.x
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -44,7 +44,7 @@ jobs:
         dotnet nuget push ./artifacts/*.nupkg --source NuGet.org --api-key ${{ secrets.NUGET_API_KEY }}
     - name: Upload Release Asset
       if: ${{ fromJSON(env.RUN_DEPLOY) }}
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
