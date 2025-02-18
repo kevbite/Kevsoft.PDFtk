@@ -3,7 +3,7 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": { 
-			"SDK_VERSION": "8.0",
+			"SDK_VERSION": "9.0",
 		}
 	},
 	"customizations": {
