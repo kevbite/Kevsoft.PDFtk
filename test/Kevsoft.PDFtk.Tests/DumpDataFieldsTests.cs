@@ -19,7 +19,7 @@ namespace Kevsoft.PDFtk.Tests
 
             result.Success.Should().BeTrue();
             result.Result.Should().BeEquivalentTo(
-                ExpectedTestDataFields
+                ExpectedTestDataFields, o => o.IncludingProperties()
             );
         }
 
@@ -66,6 +66,8 @@ namespace Kevsoft.PDFtk.Tests
             public string? FieldJustification { get; set; }
             public string[] FieldStateOption { get; set; } = Array.Empty<string>();
             public string? FieldMaxLength { get; set; }
+            public string? FieldStyleDefault { get; set; }
+            public string? FieldValueRichText { get; set; }
         }
 
         private static readonly TestDataField[]? ExpectedTestDataFields = new[]
@@ -107,7 +109,7 @@ namespace Kevsoft.PDFtk.Tests
                 FieldType = "Text",
                 FieldJustification = "Left",
                 FieldMaxLength = "40",
-                FieldValue = ""
+                FieldValue = null
             },
             new TestDataField
             {
@@ -116,7 +118,7 @@ namespace Kevsoft.PDFtk.Tests
                 FieldType = "Text",
                 FieldJustification = "Left",
                 FieldMaxLength = "20",
-                FieldValue = ""
+                FieldValue = null
             },
             new TestDataField
             {
@@ -153,11 +155,11 @@ namespace Kevsoft.PDFtk.Tests
                 FieldType = "Text",
                 FieldJustification = "Left",
                 FieldMaxLength = "40",
-                FieldValue = ""
+                FieldValue = null
             },
             new TestDataField
             {
-                FieldStateOption = new[] {"Off", "Yes"},
+                FieldStateOption = new[] { "Off", "Yes" },
                 FieldFlags = "0",
                 FieldNameAlt = "Car driving license",
                 FieldName = "Driving License Check Box",
@@ -169,7 +171,7 @@ namespace Kevsoft.PDFtk.Tests
             new TestDataField
             {
                 FieldStateOption = new[]
-                    {"Black", "Blue", "Brown", "Green", "Grey", "Orange", "Red", "Violet", "White", "Yellow"},
+                    { "Black", "Blue", "Brown", "Green", "Grey", "Orange", "Red", "Violet", "White", "Yellow" },
                 FieldFlags = "131072",
                 FieldNameAlt = "Select from colour spectrum",
                 FieldName = "Favourite Colour List Box",
@@ -180,57 +182,57 @@ namespace Kevsoft.PDFtk.Tests
             },
             new TestDataField
             {
-                FieldStateOption = new[] {"Off", "Yes"},
+                FieldStateOption = new[] { "Off", "Yes" },
                 FieldFlags = "0",
                 FieldName = "Language 1 Check Box",
                 FieldType = "Button",
                 FieldJustification = "Left",
                 FieldValue = "Off",
-                FieldValueDefault =  RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off"
+                FieldValueDefault = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off"
             },
             new TestDataField
             {
-                FieldStateOption = new[] {"Off", "Yes"},
+                FieldStateOption = new[] { "Off", "Yes" },
                 FieldFlags = "0",
                 FieldName = "Language 2 Check Box",
                 FieldType = "Button",
                 FieldJustification = "Left",
                 FieldValue = "Yes",
-                FieldValueDefault =  RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Yes"
+                FieldValueDefault = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Yes"
             },
             new TestDataField
             {
-                FieldStateOption = new[] {"Off", "Yes"},
+                FieldStateOption = new[] { "Off", "Yes" },
                 FieldFlags = "0",
                 FieldName = "Language 3 Check Box",
                 FieldType = "Button",
                 FieldJustification = "Left",
                 FieldValue = "Off",
-                FieldValueDefault =  RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off",
+                FieldValueDefault = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off",
             },
             new TestDataField
             {
-                FieldStateOption = new[] {"Off", "Yes"},
+                FieldStateOption = new[] { "Off", "Yes" },
                 FieldFlags = "0",
                 FieldName = "Language 4 Check Box",
                 FieldType = "Button",
                 FieldJustification = "Left",
                 FieldValue = "Off",
-                FieldValueDefault =  RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off",
+                FieldValueDefault = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off",
             },
             new TestDataField
             {
-                FieldStateOption = new[] {"Off", "Yes"},
+                FieldStateOption = new[] { "Off", "Yes" },
                 FieldFlags = "0",
                 FieldName = "Language 5 Check Box",
                 FieldType = "Button",
                 FieldJustification = "Left",
                 FieldValue = "Off",
-                FieldValueDefault =  RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off"
+                FieldValueDefault = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? null : "Off"
             },
             new TestDataField
             {
-                FieldStateOption = new[] {"Man", "Woman"},
+                FieldStateOption = new[] { "Man", "Woman" },
                 FieldFlags = "131072",
                 FieldNameAlt = "Select from list",
                 FieldName = "Gender List Box",
@@ -246,8 +248,19 @@ namespace Kevsoft.PDFtk.Tests
                 FieldType = "Text",
                 FieldJustification = "Left",
                 FieldMaxLength = "40",
-                FieldValue = ""
-            }
+                FieldValue = null
+            },
+            new TestDataField
+            {
+                FieldFlags = "33558528",
+                FieldNameAlt = null,
+                FieldName = "Multiline Address",
+                FieldType = "Text",
+                FieldJustification = "Left",
+                FieldValue = "15 Main Street",
+                FieldStyleDefault = "font: Arial,sans-serif 9.0pt; text-align:left; color:#000000 ",
+                FieldValueRichText = "&lt;?xml version=&quot;1.0&quot;?&gt;&lt;body xfa:APIVersion=&quot;Acroform:2.7.0.0&quot; xfa:spec=&quot;2.1&quot; xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xmlns:xfa=&quot;http://www.xfa.org/schema/xfa-data/1.0/&quot;&gt;&lt;p dir=&quot;ltr&quot; style=&quot;margin-top:0pt;margin-bottom:0pt;font-family:Arial;font-size:9pt&quot;&gt;15 Main Street&lt;/p&gt;&lt;/body&gt;"
+            },
         };
     }
 }

@@ -13,8 +13,10 @@ namespace Kevsoft.PDFtk
         public string? FieldNameAlt { get; private set; }
         public string? FieldFlags { get; private set; }
         public string? FieldJustification { get; private set; }
-        public string[] FieldStateOption { get; private set; } = new string[0];
+        public string[] FieldStateOption { get; private set; } = [];
         public string? FieldMaxLength { get; private set; }
+        public string? FieldStyleDefault { get; private set; }
+        public string? FieldValueRichText { get; private set; }
 
         internal static DataField Parse(string[] args)
         {
@@ -46,10 +48,12 @@ namespace Kevsoft.PDFtk
                 {
                     if (value is { })
                     {
-                        field.FieldStateOption = field.FieldStateOption.Concat(new[] {value}).ToArray();
+                        field.FieldStateOption = field.FieldStateOption.Concat([value]).ToArray();
                     }
                 },
-                ["FieldMaxLength"] = (field, value) => field.FieldMaxLength = value
+                ["FieldMaxLength"] = (field, value) => field.FieldMaxLength = value,
+                ["FieldStyleDefault"] = (field, value) => field.FieldStyleDefault = value,
+                ["FieldValueRichText"] = (field, value) => field.FieldValueRichText = value
             };
     }
 }
