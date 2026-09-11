@@ -25,6 +25,20 @@ namespace Kevsoft.PDFtk
         /// <param name="pages">The pages to concatenate.</param>
         /// <returns>A result with the PDF as a byte array with the concatenated pages.</returns>
         Task<IPDFtkResult<byte[]>> GetPagesAsync(string filePath, params int[] pages);
+
+        /// <summary>
+        /// Compresses the page streams in a PDF file.
+        /// </summary>
+        /// <param name="filePath">The PDF file path.</param>
+        /// <returns>A result with the compressed PDF as a byte array.</returns>
+        Task<IPDFtkResult<byte[]>> CompressAsync(string filePath);
+
+        /// <summary>
+        /// Decompresses the page streams in a PDF file.
+        /// </summary>
+        /// <param name="filePath">The PDF file path.</param>
+        /// <returns>A result with the decompressed PDF as a byte array.</returns>
+        Task<IPDFtkResult<byte[]>> DecompressAsync(string filePath);
         
         /// <summary>
         /// Reads the PDF and returns the form field statistics.
