@@ -298,14 +298,6 @@ if(result.Success)
 }
 ```
 
-### Compression/Decompression
-
-These are only useful when you want to edit PDF code in a text
-editor like vim or emacs.  Remove PDF page stream compression by
-applying the uncompress filter. 
-
-*Not Implemented yet.*
-
 ## Samples
 
 The [samples](samples/) folder containers examples of how you could use the Kevsoft.PDFtk Library.
