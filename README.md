@@ -183,6 +183,23 @@ if(result.Success)
 }
 ```
 
+### Compressing and Decompressing a PDF
+
+Compress or decompress PDF page streams. Decompression is useful when inspecting PDF page code in a text editor.
+
+```csharp
+var pdftk = new PDFtk();
+var pdfBytes = await File.ReadAllBytesAsync("Form.pdf");
+
+var compressed = await pdftk.CompressAsync(pdfBytes);
+var decompressed = await pdftk.DecompressAsync(pdfBytes);
+
+if(compressed.Success && decompressed.Success)
+{
+   // Do something with compressed.Result and decompressed.Result.
+}
+```
+
 ### Stamping a PDF
 
 Applies a stamp to the PDF file.
@@ -280,14 +297,6 @@ if(result.Success)
    }
 }
 ```
-
-### Compression/Decompression
-
-These are only useful when you want to edit PDF code in a text
-editor like vim or emacs.  Remove PDF page stream compression by
-applying the uncompress filter. 
-
-*Not Implemented yet.*
 
 ## Samples
 

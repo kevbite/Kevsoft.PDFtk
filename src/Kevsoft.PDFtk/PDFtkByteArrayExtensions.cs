@@ -37,6 +37,32 @@ namespace Kevsoft.PDFtk
 
             return await pdftk.GetPagesAsync(inputFile.TempFileName, pages);
         }
+
+        /// <summary>
+        /// Compresses the page streams in a PDF file.
+        /// </summary>
+        /// <param name="pdftk">The IPDFtk object.</param>
+        /// <param name="pdfFile">A byte array of the PDF file input.</param>
+        /// <returns>A result with the compressed PDF as a byte array.</returns>
+        public static async Task<IPDFtkResult<byte[]>> CompressAsync(this IPDFtk pdftk, byte[] pdfFile)
+        {
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
+
+            return await pdftk.CompressAsync(inputFile.TempFileName);
+        }
+
+        /// <summary>
+        /// Decompresses the page streams in a PDF file.
+        /// </summary>
+        /// <param name="pdftk">The IPDFtk object.</param>
+        /// <param name="pdfFile">A byte array of the PDF file input.</param>
+        /// <returns>A result with the decompressed PDF as a byte array.</returns>
+        public static async Task<IPDFtkResult<byte[]>> DecompressAsync(this IPDFtk pdftk, byte[] pdfFile)
+        {
+            using var inputFile = await TempPDFtkFile.FromAsync(pdfFile);
+
+            return await pdftk.DecompressAsync(inputFile.TempFileName);
+        }
         
         /// <summary>
         /// Reads the PDF and returns the form field statistics.

@@ -70,6 +70,18 @@ namespace Kevsoft.PDFtk
         }
 
         /// <inheritdoc/>
+        public async Task<IPDFtkResult<byte[]>> CompressAsync(string filePath)
+        {
+            return await ApplyOutputOptionAsync(filePath, "compress");
+        }
+
+        /// <inheritdoc/>
+        public async Task<IPDFtkResult<byte[]>> DecompressAsync(string filePath)
+        {
+            return await ApplyOutputOptionAsync(filePath, "uncompress");
+        }
+
+        /// <inheritdoc/>
         private static IEnumerable<string> GetPageRangeArgs(int[] pages)
         {
             var runStart = -1;
@@ -99,6 +111,17 @@ namespace Kevsoft.PDFtk
             }
 
             yield return RangeString();
+        }
+
+        private async Task<IPDFtkResult<byte[]>> ApplyOutputOptionAsync(string filePath, string option)
+        {
+            using var outputFile = TempPDFtkFile.Create();
+
+            var executeProcessResult = await _pdftkProcess.ExecuteAsync(filePath,
+                "output", outputFile.TempFileName,
+                option);
+
+            return await ResolveSingleFileExecutionResultAsync(executeProcessResult, outputFile);
         }
 
         /// <inheritdoc/>
